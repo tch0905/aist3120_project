@@ -7,7 +7,15 @@ from sklearn.model_selection import train_test_split
 
 from position import PositionalEncoding
 from tranfomer import TransformerBlock
-from tokenize import TokenEmbedding
+
+
+class TokenEmbedding(nn.Module):
+    def __init__(self, vocab_size, embed_size):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+
+    def forward(self, x):
+        return self.embedding(x)
 
 
 class CustomBERTNER(nn.Module):
