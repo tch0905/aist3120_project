@@ -74,8 +74,8 @@ class_weights = class_weights / class_weights.sum()
 print("Class Weights:", class_weights)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epoch_size = 25
-batch_size = 4
+epoch_size = 30
+batch_size = 8
 learning_rate = 3e-5
 print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
@@ -88,8 +88,6 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # Move class_weights to the same device as the model
 class_weights = class_weights.to(device)
 
-# Define the weighted loss function
-criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
 
 
 def tokenize_and_align_labels(examples):
@@ -144,8 +142,32 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
+# Define the weighted loss function
+criterion = nn.CrossEntropyLoss(ignore_index=-100)
+
 # Training loop
-for epoch in range(epoch_size):
+for epoch in range(epoch_size//2):
+    model.train()
+    total_loss = 0
+    for batch in train_loader:
+        input_ids = batch["input_ids"].to(device)
+        attention_mask = batch["attention_mask"].to(device)
+        labels = batch["labels"].to(device)
+
+        optimizer.zero_grad()
+        outputs = model(input_ids, attention_mask)
+
+        # Compute loss with class weights
+        loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+    print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+
+criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+for epoch in range(epoch_size//2, epoch_size):
     model.train()
     total_loss = 0
     for batch in train_loader:
