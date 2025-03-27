@@ -77,7 +77,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 epoch_size = 25
 batch_size = 4
 learning_rate = 3e-5
-print(f"Training in epoch_size: {}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
+print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
 model = CustomBERTNER(vocab_size=tokenizer.vocab_size,
                       num_classes=len(dataset['train'].features['ner_tags'].feature.names)).to(device)
