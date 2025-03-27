@@ -42,6 +42,7 @@ class CustomBERTNER(nn.Module):
 
 from datasets import load_from_disk
 from transformers import AutoTokenizer
+from collections import Counter
 # Load CoNLL-2003 dataset
 dataset = load_from_disk("../conll2003_local")
 
@@ -57,14 +58,38 @@ tokenized_example = tokenizer(example, is_split_into_words=True, padding="max_le
 
 print(tokenized_example)
 
+# Get all labels from the dataset
+all_labels = [label for data in dataset["train"]["ner_tags"] for label in data]
+
+# Count occurrences of each class
+label_counts = Counter(all_labels)
+total_samples = sum(label_counts.values())
+
+# Compute class weights (inverse of frequency)
+num_classes = len(dataset["train"].features["ner_tags"].feature.names)
+class_weights = torch.tensor([total_samples / (label_counts[i] + 1e-6) for i in range(num_classes)], dtype=torch.float)
+
+# Normalize weights (optional, but recommended)
+class_weights = class_weights / class_weights.sum()
+print("Class Weights:", class_weights)
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+epoch_size = 25
+batch_size = 4
+learning_rate = 3e-5
+print(f"Training in epoch_size: {}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
 model = CustomBERTNER(vocab_size=tokenizer.vocab_size,
                       num_classes=len(dataset['train'].features['ner_tags'].feature.names)).to(device)
 
-optimizer = optim.Adam(model.parameters(), lr=3e-5)
-criterion = nn.CrossEntropyLoss(ignore_index=-100)  # Ignore padding tokens
+
+
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+# Move class_weights to the same device as the model
+class_weights = class_weights.to(device)
+
+# Define the weighted loss function
+criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
 
 
 def tokenize_and_align_labels(examples):
@@ -110,16 +135,17 @@ class CoNLLDataset(torch.utils.data.Dataset):
         }
 
 
+
 train_dataset = CoNLLDataset(tokenized_datasets["train"])
 val_dataset = CoNLLDataset(tokenized_datasets["validation"])
 test_dataset = CoNLLDataset(tokenized_datasets["test"])
 
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=True)
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=4, shuffle=False)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=False)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 # Training loop
-for epoch in range(30):
+for epoch in range(epoch_size):
     model.train()
     total_loss = 0
     for batch in train_loader:
@@ -129,7 +155,9 @@ for epoch in range(30):
 
         optimizer.zero_grad()
         outputs = model(input_ids, attention_mask)
-        loss = criterion(outputs.view(-1, len(dataset['train'].features['ner_tags'].feature.names)), labels.view(-1))
+
+        # Compute loss with class weights
+        loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
         loss.backward()
         optimizer.step()
 
