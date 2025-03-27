@@ -43,7 +43,7 @@ class CustomBERTNER(nn.Module):
 from datasets import load_dataset
 
 # Load CoNLL-2003 dataset
-dataset = load_from_disk("./conll2003_local")
+dataset = load_from_disk("../conll2003_local")
 
 # Check available splits
 print(dataset)
