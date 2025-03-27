@@ -1,0 +1,59 @@
+DatasetDict({
+    train: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 14041
+    })
+    validation: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3250
+    })
+    test: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3453
+    })
+})
+{'input_ids': [101, 7270, 22961, 1528, 1840, 1106, 21423, 1418, 2495, 12913, 119, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+Class Weights: tensor([0.0020, 0.0511, 0.0744, 0.0533, 0.0910, 0.0472, 0.2913, 0.0980, 0.2918])
+Training in epoch_size: 25, batch_size: 4, learning_rate: 3e-05, device: cuda
+Epoch 1, Loss: 1.3423
+Epoch 2, Loss: 0.7897
+Epoch 3, Loss: 0.4945
+Epoch 4, Loss: 0.3031
+Epoch 5, Loss: 0.1839
+Epoch 6, Loss: 0.1308
+Epoch 7, Loss: 0.0907
+Epoch 8, Loss: 0.0752
+Epoch 9, Loss: 0.0591
+Epoch 10, Loss: 0.0494
+Epoch 11, Loss: 0.0475
+Epoch 12, Loss: 0.0456
+Epoch 13, Loss: 0.0367
+Epoch 14, Loss: 0.0342
+Epoch 15, Loss: 0.0334
+Epoch 16, Loss: 0.0324
+Epoch 17, Loss: 0.0327
+Epoch 18, Loss: 0.0248
+Epoch 19, Loss: 0.0263
+Epoch 20, Loss: 0.0336
+Epoch 21, Loss: 0.0244
+Epoch 22, Loss: 0.0261
+Epoch 23, Loss: 0.0256
+Epoch 24, Loss: 0.0219
+Epoch 25, Loss: 0.0196
+Evaluation Report:
+              precision    recall  f1-score   support
+
+           0     0.9573    0.9512    0.9542     47232
+           1     0.6173    0.6372    0.6271      2875
+           2     0.8655    0.4998    0.6337      2511
+           3     0.4510    0.8076    0.5788      3487
+           4     0.7138    0.4720    0.5682      1284
+           5     0.7901    0.6150    0.6917      2938
+           6     0.7645    0.5109    0.6125       413
+           7     0.6059    0.4741    0.5320      1255
+           8     0.4788    0.4938    0.4862       320
+
+    accuracy                         0.8699     62315
+   macro avg     0.6938    0.6068    0.6316     62315
+weighted avg     0.8859    0.8699    0.8717     62315
+
