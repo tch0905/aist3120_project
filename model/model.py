@@ -49,7 +49,7 @@ dataset = load_from_disk("../conll2003_local")
 print(dataset)
 
 # Use a BERT tokenizer (you can choose any, but we won't use its weights)
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+tokenizer = AutoTokenizer.from_pretrained("../bert-base-cased-local")
 
 # Tokenize a sample sentence
 example = dataset["train"][0]["tokens"]
