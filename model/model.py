@@ -40,15 +40,13 @@ class CustomBERTNER(nn.Module):
         return self.classifier(x)  # Output shape: (batch_size, seq_length, num_classes)
 
 
-from datasets import load_dataset
-
+from datasets import load_from_disk
+from transformers import AutoTokenizer
 # Load CoNLL-2003 dataset
 dataset = load_from_disk("../conll2003_local")
 
 # Check available splits
 print(dataset)
-
-from transformers import AutoTokenizer
 
 # Use a BERT tokenizer (you can choose any, but we won't use its weights)
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
