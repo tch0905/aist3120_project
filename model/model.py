@@ -144,33 +144,33 @@ train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size,
 val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-# Define the weighted loss function
-criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
-
-# Training loop
-for epoch in range(epoch_size//2):
-    model.train()
-    total_loss = 0
-    for batch in train_loader:
-        input_ids = batch["input_ids"].to(device)
-        attention_mask = batch["attention_mask"].to(device)
-        labels = batch["labels"].to(device)
-
-        optimizer.zero_grad()
-        outputs = model(input_ids, attention_mask)
-
-        # Compute loss with class weights
-        loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
-        loss.backward()
-        optimizer.step()
-
-        total_loss += loss.item()
-
-    print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
-
+# # Define the weighted loss function
+# criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+#
+# # Training loop
+# for epoch in range(epoch_size//2):
+#     model.train()
+#     total_loss = 0
+#     for batch in train_loader:
+#         input_ids = batch["input_ids"].to(device)
+#         attention_mask = batch["attention_mask"].to(device)
+#         labels = batch["labels"].to(device)
+#
+#         optimizer.zero_grad()
+#         outputs = model(input_ids, attention_mask)
+#
+#         # Compute loss with class weights
+#         loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
+#         loss.backward()
+#         optimizer.step()
+#
+#         total_loss += loss.item()
+#
+#     print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+#
 
 criterion = nn.CrossEntropyLoss(ignore_index=-100)
-for epoch in range(epoch_size//2, epoch_size):
+for epoch in range(epoch_size):
     model.train()
     total_loss = 0
     for batch in train_loader:
