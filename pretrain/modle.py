@@ -7,8 +7,8 @@ from datasets import load_dataset
 dataset = load_dataset("conll2003")
 
 # Load tokenizer and model
-tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
-model = BertForTokenClassification.from_pretrained("bert-base-uncased", num_labels=9)
+tokenizer = BertTokenizerFast.from_pretrained("../bert-base-cased-local")
+model = BertForTokenClassification.from_pretrained("../bert-base-cased-local", num_labels=9)
 
 
 # Tokenization function
