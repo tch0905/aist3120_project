@@ -19,7 +19,7 @@ class TokenEmbedding(nn.Module):
 
 
 class CustomBERTNER(nn.Module):
-    def __init__(self, vocab_size, embed_size=768, num_layers=6, heads=8, forward_expansion=4, dropout=0.1, max_len=512,
+    def __init__(self, vocab_size, embed_size=768, num_layers=6, heads=8, forward_expansion=8, dropout=0.8, max_len=512,
                  num_classes=9):
         print(
             f"vocab_size={vocab_size}, embed_size={embed_size}, num_layers={num_layers}, heads={heads}, forward_expansion={forward_expansion}, dropout={dropout}, max_len={max_len}, num_classes={num_classes}")
@@ -216,5 +216,11 @@ def evaluate(model, data_loader):
     return classification_report(all_labels, all_preds, digits=4)
 
 
-print("Evaluation Report:")
+print("Evaluation Report on Training Data:")
+print(evaluate(model, train_loader))
+
+print("Evaluation Report on Validation Data:")
+print(evaluate(model, val_loader))
+
+print("Evaluation Report on Test Data:")
 print(evaluate(model, test_loader))

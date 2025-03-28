@@ -1,0 +1,40 @@
+DatasetDict({
+    train: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 14041
+    })
+    validation: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3250
+    })
+    test: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3453
+    })
+})
+{'input_ids': [101, 7270, 22961, 1528, 1840, 1106, 21423, 1418, 2495, 12913, 119, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+Class Weights: tensor([0.0020, 0.0511, 0.0744, 0.0533, 0.0910, 0.0472, 0.2913, 0.0980, 0.2918])
+Training in epoch_size: 5, batch_size: 4, learning_rate: 3e-05, device: cuda
+vocab_size=28996, embed_size=768, num_layers=6, heads=12, forward_expansion=4, dropout=0.1, max_len=512, num_classes=9
+Epoch 1, Loss: 0.5162
+Epoch 2, Loss: 0.2833
+Epoch 3, Loss: 0.1773
+Epoch 4, Loss: 0.1085
+Epoch 5, Loss: 0.0647
+Evaluation Report:
+              precision    recall  f1-score   support
+
+           0     0.9632    0.9613    0.9622     47232
+           1     0.6313    0.5913    0.6106      2875
+           2     0.7236    0.6173    0.6662      2511
+           3     0.6664    0.6587    0.6625      3487
+           4     0.5319    0.6098    0.5682      1284
+           5     0.6584    0.8176    0.7294      2938
+           6     0.7030    0.5157    0.5950       413
+           7     0.5866    0.5235    0.5533      1255
+           8     0.4438    0.4813    0.4618       320
+
+    accuracy                         0.8852     62315
+   macro avg     0.6565    0.6418    0.6455     62315
+weighted avg     0.8864    0.8852    0.8850     62315
+

@@ -60,5 +60,5 @@ trainer = Trainer(
 trainer.train()
 trainer.evaluate()
 
-# model.save_pretrained("./final_model")
-# tokenizer.save_pretrained("./final_model")
+model.save_pretrained("./final_model")
+tokenizer.save_pretrained("./final_model")
