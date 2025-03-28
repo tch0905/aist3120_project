@@ -1,10 +1,10 @@
 import torch
 from transformers import BertTokenizerFast, BertForTokenClassification
 from transformers import Trainer, TrainingArguments, DataCollatorForTokenClassification
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 # Load dataset (CoNLL-2003)
-dataset = load_dataset("conll2003")
+dataset = load_from_disk("../conll2003_local")
 
 # Load tokenizer and model
 tokenizer = BertTokenizerFast.from_pretrained("../bert-base-cased-local")
