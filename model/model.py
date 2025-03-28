@@ -31,6 +31,7 @@ class CustomBERTNER(nn.Module):
             for _ in range(num_layers)
         ])
         self.norm = nn.LayerNorm(embed_size)
+        self.dropout = nn.Dropout(dropout)
         self.classifier = nn.Linear(embed_size, num_classes)  # NER Tagging
 
     def forward(self, input_ids, attention_mask=None):
