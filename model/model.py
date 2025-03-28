@@ -75,7 +75,7 @@ print("Class Weights:", class_weights)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 epoch_size = 30
-batch_size = 8
+batch_size = 4
 learning_rate = 3e-5
 print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
@@ -143,7 +143,7 @@ val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shu
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 # Define the weighted loss function
-criterion = nn.CrossEntropyLoss(ignore_index=-100)
+criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
 
 # Training loop
 for epoch in range(epoch_size//2):
@@ -166,7 +166,8 @@ for epoch in range(epoch_size//2):
 
     print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
 
-criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+
+criterion = nn.CrossEntropyLoss(ignore_index=-100)
 for epoch in range(epoch_size//2, epoch_size):
     model.train()
     total_loss = 0
