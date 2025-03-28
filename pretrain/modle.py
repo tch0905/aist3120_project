@@ -32,13 +32,16 @@ tokenized_dataset = dataset.map(tokenize_and_align_labels, batched=True)
 
 # Define training arguments
 training_args = TrainingArguments(
-    output_dir="./results2",
+    output_dir="./results",
     evaluation_strategy="epoch",
     learning_rate=5.0e-6,
     per_device_train_batch_size=4,
     per_device_eval_batch_size=4,
     num_train_epochs=20,
     weight_decay=0.,
+
+    save_strategy="no",
+    load_best_model_at_end=False,
 )
 
 # Use DataCollatorForTokenClassification to handle padding
@@ -56,3 +59,6 @@ trainer = Trainer(
 # Train and evaluate
 trainer.train()
 trainer.evaluate()
+
+# model.save_pretrained("./final_model")
+# tokenizer.save_pretrained("./final_model")
