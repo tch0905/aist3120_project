@@ -171,7 +171,8 @@ test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, s
 #     print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
 #
 
-criterion = nn.CrossEntropyLoss(ignore_index=-100)
+criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+# criterion = nn.CrossEntropyLoss(ignore_index=-100)
 for epoch in range(epoch_size):
     model.train()
     total_loss = 0
