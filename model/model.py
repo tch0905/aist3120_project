@@ -19,7 +19,7 @@ class TokenEmbedding(nn.Module):
 
 
 class CustomBERTNER(nn.Module):
-    def __init__(self, vocab_size, embed_size=768, num_layers=12, heads=12, forward_expansion=8, dropout=0.1, max_len=512,
+    def __init__(self, vocab_size, embed_size=768, num_layers=24, heads=8, forward_expansion=8, dropout=0.2, max_len=512,
                  num_classes=9):
         print(
             f"vocab_size={vocab_size}, embed_size={embed_size}, num_layers={num_layers}, heads={heads}, forward_expansion={forward_expansion}, dropout={dropout}, max_len={max_len}, num_classes={num_classes}")
@@ -78,8 +78,8 @@ class_weights = class_weights / class_weights.sum()
 print("Class Weights:", class_weights)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epoch_size = 5
-batch_size = 4
+epoch_size = 30
+batch_size = 12
 learning_rate = 3e-5
 print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
