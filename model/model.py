@@ -40,7 +40,6 @@ class CustomBERTNER(nn.Module):
         for layer in self.layers:
             x = layer(x, attention_mask)
         x = self.norm(x)
-        x = self.dropout(x)
         return self.classifier(x)  # Output shape: (batch_size, seq_length, num_classes)
 
 
