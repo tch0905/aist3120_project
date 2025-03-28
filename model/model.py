@@ -19,7 +19,7 @@ class TokenEmbedding(nn.Module):
 
 
 class CustomBERTNER(nn.Module):
-    def __init__(self, vocab_size, embed_size=768, num_layers=6, heads=8, forward_expansion=8, dropout=0.8, max_len=512,
+    def __init__(self, vocab_size, embed_size=768, num_layers=12, heads=12, forward_expansion=8, dropout=0.1, max_len=512,
                  num_classes=9):
         print(
             f"vocab_size={vocab_size}, embed_size={embed_size}, num_layers={num_layers}, heads={heads}, forward_expansion={forward_expansion}, dropout={dropout}, max_len={max_len}, num_classes={num_classes}")
@@ -39,6 +39,7 @@ class CustomBERTNER(nn.Module):
         for layer in self.layers:
             x = layer(x, attention_mask)
         x = self.norm(x)
+        x = self.dropout(x)
         return self.classifier(x)  # Output shape: (batch_size, seq_length, num_classes)
 
 

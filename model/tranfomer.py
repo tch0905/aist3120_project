@@ -17,6 +17,8 @@ class TransformerBlock(nn.Module):
 
     def forward(self, x, mask=None):
         attention = self.attention(x, mask)
+        x = self.dropout(x)
         x = self.norm1(attention + x)
         forward = self.feed_forward(x)
+        x = self.dropout(x)
         return self.norm2(forward + x)
