@@ -76,7 +76,7 @@ class_weights = class_weights / class_weights.sum()
 print("Class Weights:", class_weights)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epoch_size = 30
+epoch_size = 5
 batch_size = 4
 learning_rate = 3e-5
 print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
