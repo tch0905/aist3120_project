@@ -216,5 +216,11 @@ def evaluate(model, data_loader):
     return classification_report(all_labels, all_preds, digits=4)
 
 
-print("Evaluation Report:")
+print("Evaluation Report on Training Data:")
+print(evaluate(model, train_loader))
+
+print("Evaluation Report on Validation Data:")
+print(evaluate(model, val_loader))
+
+print("Evaluation Report on Test Data:")
 print(evaluate(model, test_loader))
