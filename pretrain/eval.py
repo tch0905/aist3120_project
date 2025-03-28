@@ -1,15 +1,15 @@
 import torch
 from transformers import BertTokenizerFast, BertForTokenClassification
 from transformers import Trainer, DataCollatorForTokenClassification, TrainingArguments
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 import evaluate
 import numpy as np
 
 # Load dataset (e.g., CoNLL-2003)
-dataset = load_dataset("conll2003")
+dataset = load_from_disk("../conll2003_local")
 
 # Load tokenizer and model from the checkpoint
-checkpoint_path = "C:\\Users\\tch0905\\PycharmProjects\\aist3120\\proj\\aist3120_project\\results\\checkpoint-2634"
+checkpoint_path = "./final_model"
 tokenizer = BertTokenizerFast.from_pretrained(checkpoint_path)
 model = BertForTokenClassification.from_pretrained(checkpoint_path)
 
