@@ -80,7 +80,7 @@ print("Class Weights:", class_weights)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 epoch_size = 30
 batch_size = 12
-learning_rate = 3e-5
+learning_rate = 5.0e-6
 print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
 
 model = CustomBERTNER(vocab_size=tokenizer.vocab_size,
