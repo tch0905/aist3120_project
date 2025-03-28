@@ -19,7 +19,7 @@ class TokenEmbedding(nn.Module):
 
 
 class CustomBERTNER(nn.Module):
-    def __init__(self, vocab_size, embed_size=768, num_layers=24, heads=8, forward_expansion=8, dropout=0.2, max_len=512,
+    def __init__(self, vocab_size, embed_size=768, num_layers=6, heads=8, forward_expansion=8, dropout=0.2, max_len=512,
                  num_classes=9):
         print(
             f"vocab_size={vocab_size}, embed_size={embed_size}, num_layers={num_layers}, heads={heads}, forward_expansion={forward_expansion}, dropout={dropout}, max_len={max_len}, num_classes={num_classes}")
@@ -91,7 +91,6 @@ model = CustomBERTNER(vocab_size=tokenizer.vocab_size,
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 # Move class_weights to the same device as the model
 class_weights = class_weights.to(device)
-
 
 
 def tokenize_and_align_labels(examples):
