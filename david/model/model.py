@@ -6,7 +6,7 @@ from transformers import (
     AutoTokenizer,
     DataCollatorForTokenClassification,
     Trainer,
-    TrainingArguments
+    TrainingArguments,
 )
 from datasets import load_dataset, load_from_disk
 from seqeval.metrics import classification_report
@@ -22,6 +22,7 @@ num_labels = len(label_names)
 model_name = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 
+
 # Custom Model Architecture
 class BertWithMLPForNER(nn.Module):
     def __init__(self, model_name, num_labels, hidden_dim=256):
@@ -29,35 +30,37 @@ class BertWithMLPForNER(nn.Module):
         self.bert = AutoModelForTokenClassification.from_pretrained(
             "../../bert-base-cased-local",
             num_labels=num_labels,
-            output_hidden_states=True
+            output_hidden_states=True,
         )
         # Freeze BERT (optional)
         # for param in self.bert.parameters():
         #     param.requires_grad = False
-        
+
         # Custom MLP Head
         self.mlp = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size, hidden_dim),
             nn.ReLU(),
             nn.Dropout(0.1),
-            nn.Linear(hidden_dim, num_labels)
+            nn.Linear(hidden_dim, num_labels),
         )
-    
+
     def forward(self, input_ids, attention_mask, labels=None):
         outputs = self.bert(input_ids, attention_mask=attention_mask)
         sequence_output = outputs.hidden_states[-1]  # Last hidden state
-        
+
         # Pass through MLP
         logits = self.mlp(sequence_output)
-        
+
         loss = None
         if labels is not None:
             loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
             loss = loss_fn(logits.view(-1, num_labels), labels.view(-1))
-        
+
         return {"loss": loss, "logits": logits}
 
+
 model = BertWithMLPForNER(model_name, num_labels)
+
 
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
@@ -66,9 +69,9 @@ def tokenize_and_align_labels(examples):
         truncation=True,
         is_split_into_words=True,
         padding="max_length",
-        max_length=128
+        max_length=128,
     )
-    
+
     labels = []
     for i, label in enumerate(examples["ner_tags"]):
         word_ids = tokenized_inputs.word_ids(batch_index=i)
@@ -83,63 +86,76 @@ def tokenize_and_align_labels(examples):
                 label_ids.append(-100)  # Subword (optional: use label[word_idx])
             previous_word_idx = word_idx
         labels.append(label_ids)
-    
+
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
+
 
 tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True)
 
 # Step 4: Data Collator
 data_collator = DataCollatorForTokenClassification(tokenizer)
 
+
 def compute_metrics(p):
     predictions, labels = p.predictions, p.label_ids
     predictions = np.argmax(predictions, axis=2)
-    
+
     # Remove ignored index (-100)
-    true_labels = [[label_names[l] for l in label if l != -100] 
-                  for label in labels]
-    true_predictions = [[label_names[p] for (p, l) in zip(prediction, label) if l != -100]
-                       for prediction, label in zip(predictions, labels)]
-    
+    true_labels = [[label_names[l] for l in label if l != -100] for label in labels]
+    true_predictions = [
+        [label_names[p] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+
     # Get full classification report with float precision
-    report = classification_report(true_labels, true_predictions, 
-                                 output_dict=True,
-                                 digits=6)  # Increased decimal places
-    
+    report = classification_report(
+        true_labels, true_predictions, output_dict=True, digits=6
+    )  # Increased decimal places
+
     # Calculate exact match accuracy with high precision
-    correct = sum(1 for true, pred in zip(true_labels, true_predictions) if true == pred)
+    correct = sum(
+        1 for true, pred in zip(true_labels, true_predictions) if true == pred
+    )
     total = len(true_labels)
     accuracy = correct / total if total > 0 else 0.0
-    
+
     # Format all metrics to 6 decimal places
     metrics = {
         # Overall scores
-        'accuracy': round(accuracy, 6),
-        'overall_precision': round(report['micro avg']['precision'], 6),
-        'overall_recall': round(report['micro avg']['recall'], 6),
-        'overall_f1': round(report['micro avg']['f1-score'], 6),
-        
+        "accuracy": round(accuracy, 6),
+        "overall_precision": round(report["micro avg"]["precision"], 6),
+        "overall_recall": round(report["micro avg"]["recall"], 6),
+        "overall_f1": round(report["micro avg"]["f1-score"], 6),
         # Macro averages
-        'macro_precision': round(report['macro avg']['precision'], 6),
-        'macro_recall': round(report['macro avg']['recall'], 6),
-        'macro_f1': round(report['macro avg']['f1-score'], 6),
+        "macro_precision": round(report["macro avg"]["precision"], 6),
+        "macro_recall": round(report["macro avg"]["recall"], 6),
+        "macro_f1": round(report["macro avg"]["f1-score"], 6),
     }
-    
+
     # Add per-class F1 scores with high precision
     for label_name in label_names:
-        if label_name in report and label_name != 'macro avg' and label_name != 'micro avg':
-            metrics.update({
-                f"{label_name}_precision": round(report[label_name]['precision'], 6),
-                f"{label_name}_recall": round(report[label_name]['recall'], 6),
-                f"{label_name}_f1": round(report[label_name]['f1-score'], 6),
-            })
-    
+        if (
+            label_name in report
+            and label_name != "macro avg"
+            and label_name != "micro avg"
+        ):
+            metrics.update(
+                {
+                    f"{label_name}_precision": round(
+                        report[label_name]["precision"], 6
+                    ),
+                    f"{label_name}_recall": round(report[label_name]["recall"], 6),
+                    f"{label_name}_f1": round(report[label_name]["f1-score"], 6),
+                }
+            )
+
     # Print beautifully formatted report
     print("\nDetailed Classification Report (6 decimal places):")
     print(classification_report(true_labels, true_predictions, digits=6))
-    
+
     return metrics
+
 
 # Step 6: Training
 training_args = TrainingArguments(
@@ -151,6 +167,10 @@ training_args = TrainingArguments(
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
+    save_total_limit=3,  # NEW: Limit to 3 checkpoint (best 3 model only)
+    load_best_model_at_end=True,  # NEW: Load the best model at the end
+    metric_for_best_model="eval_overall_f1",  # NEW: Define "best" based on F1
+    greater_is_better=True,  # NEW: Higher F1 is better
     logging_dir="./logs",
     report_to="none",
     logging_steps=10,
