@@ -13,10 +13,19 @@ from seqeval.metrics import classification_report
 
 # Step 1: Load Dataset and Labels
 dataset = load_from_disk("../conll2003_local")
+wikiann_dataset = load_from_disk("../wikiann_local")
 
 # CoNLL-2003 Label Names
 label_names = dataset["train"].features["ner_tags"].feature.names
 num_labels = len(label_names)
+
+# Verify WikiANN tags (should only contain 0-6)
+def validate_wikiann_tags(example):
+    for tag in example["ner_tags"]:
+        assert tag in {0, 1, 2, 3, 4, 5, 6}, f"Invalid WikiANN tag: {tag}"
+    return example
+
+wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 
 # Step 2: Load Tokenizer and Model with Custom MLP Head
 model_name = "bert-base-cased"
@@ -91,7 +100,8 @@ def tokenize_and_align_labels(examples):
     return tokenized_inputs
 
 
-tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True)
+tokenized_datasets_conll = dataset.map(tokenize_and_align_labels, batched=True)
+tokenized_datasets_wikiann = wikiann_dataset.map(tokenize_and_align_labels, batched=True)
 
 # Step 4: Data Collator
 data_collator = DataCollatorForTokenClassification(tokenizer)
@@ -162,8 +172,8 @@ training_args = TrainingArguments(
     output_dir="../../../autodl-fs/ner_results",
     per_device_train_batch_size=64,
     per_device_eval_batch_size=64,
-    num_train_epochs=20,
-    learning_rate=1e-5,
+    num_train_epochs=10,
+    learning_rate=2e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
@@ -174,13 +184,14 @@ training_args = TrainingArguments(
     logging_dir="./logs",
     report_to="none",
     logging_steps=10,
+    warmup_ratio=0.1,
 )
 
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets["train"],
-    eval_dataset=tokenized_datasets["validation"],
+    train_dataset=tokenized_datasets_wikiann["train"],
+    eval_dataset=tokenized_datasets_conll["validation"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
@@ -188,6 +199,23 @@ trainer = Trainer(
 
 trainer.train()
 
+trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.train()
+
 # Step 7: Evaluate
-results = trainer.evaluate(tokenized_datasets["test"])
+results = trainer.evaluate(tokenized_datasets_conll["test"])
 print(results)
+
+print("\n=== Best Model Information ===")
+print(f"Best Model Checkpoint: {trainer.state.best_model_checkpoint}")
+print(f"Best Validation F1 Score: {trainer.state.best_metric:.6f}")
+
+# Evaluate the best model on the test set
+print("\n=== Evaluation of Best Model on Test Set ===")
+best_model_results = trainer.evaluate(tokenized_datasets_conll["test"])
+print("Test Set Results for Best Model:")
+for metric, value in best_model_results.items():
+    if isinstance(value, float):
+        print(f"{metric}: {value:.6f}")
+    else:
+        print(f"{metric}: {value}")

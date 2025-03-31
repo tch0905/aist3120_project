@@ -1,0 +1,32 @@
+=== Best Model Information ===
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-2200
+Best Validation F1 Score: 0.948684
+
+=== Evaluation of Best Model on Test Set ===
+ 96%|███████████████████████████████████████████████████████████████████████████████▉   | 52/54 [00:02<00:00, 18.43it/s]
+Detailed Classification Report (6 decimal places):
+              precision    recall  f1-score   support
+
+         LOC   0.929898  0.931573  0.930735      1666
+        MISC   0.767690  0.819088  0.792557       702
+         ORG   0.883586  0.913907  0.898491      1661
+         PER   0.960248  0.957276  0.958760      1615
+
+   micro avg   0.903411  0.919738  0.911501      5644
+   macro avg   0.885356  0.905461  0.895135      5644
+weighted avg   0.904778  0.919738  0.912078      5644
+
+100%|███████████████████████████████████████████████████████████████████████████████████| 54/54 [00:03<00:00, 14.72it/s]
+Test Set Results for Best Model:
+eval_loss: 0.114451
+eval_accuracy: 0.856067
+eval_overall_precision: 0.903411
+eval_overall_recall: 0.919738
+eval_overall_f1: 0.911501
+eval_macro_precision: 0.885356
+eval_macro_recall: 0.905461
+eval_macro_f1: 0.895135
+eval_runtime: 3.748100
+eval_samples_per_second: 921.271000
+eval_steps_per_second: 14.407000
+epoch: 10.000000
