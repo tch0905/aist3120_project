@@ -8,11 +8,11 @@ from transformers import (
     Trainer,
     TrainingArguments
 )
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 from seqeval.metrics import classification_report
 
 # Step 1: Load Dataset and Labels
-dataset = load_dataset("conll2003")
+dataset = load_from_disk("../conll2003_local")
 
 # CoNLL-2003 Label Names
 label_names = dataset["train"].features["ner_tags"].feature.names
@@ -20,14 +20,14 @@ num_labels = len(label_names)
 
 # Step 2: Load Tokenizer and Model with Custom MLP Head
 model_name = "bert-base-cased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 
 # Custom Model Architecture
 class BertWithMLPForNER(nn.Module):
     def __init__(self, model_name, num_labels, hidden_dim=256):
         super().__init__()
         self.bert = AutoModelForTokenClassification.from_pretrained(
-            model_name,
+            "../../bert-base-cased-local",
             num_labels=num_labels,
             output_hidden_states=True
         )
@@ -143,11 +143,11 @@ def compute_metrics(p):
 
 # Step 6: Training
 training_args = TrainingArguments(
-    output_dir="./ner_results",
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    num_train_epochs=1,
-    learning_rate=2e-5,
+    output_dir="../../../autodl-fs/ner_results",
+    per_device_train_batch_size=64,
+    per_device_eval_batch_size=64,
+    num_train_epochs=20,
+    learning_rate=1e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
