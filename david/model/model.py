@@ -8,6 +8,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+import torch.nn.functional as F
 from datasets import load_dataset, load_from_disk
 from seqeval.metrics import classification_report
 
@@ -31,10 +32,34 @@ wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 model_name = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=None, gamma=2.0, ignore_index=-100, reduction='mean'):
+        super().__init__()
+        self.alpha = alpha  # Weighting factor per class (can be None)
+        self.gamma = gamma  # Focusing parameter (higher γ = more focus on hard examples)
+        self.ignore_index = ignore_index
+        self.reduction = reduction
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(
+            inputs, 
+            targets, 
+            weight=self.alpha, 
+            ignore_index=self.ignore_index, 
+            reduction='none'
+        )
+        pt = torch.exp(-ce_loss)  # Probability of true class
+        focal_loss = (1 - pt) ** self.gamma * ce_loss  # Focal Loss formula
+
+        if self.reduction == 'mean':
+            return focal_loss.mean()
+        elif self.reduction == 'sum':
+            return focal_loss.sum()
+        return focal_loss
 
 # Custom Model Architecture
 class BertWithMLPForNER(nn.Module):
-    def __init__(self, model_name, num_labels, hidden_dim=256):
+    def __init__(self, model_name, num_labels, alpha=None, gamma=2.0, hidden_dim=256):
         super().__init__()
         self.bert = AutoModelForTokenClassification.from_pretrained(
             "../../bert-base-cased-local",
@@ -49,9 +74,11 @@ class BertWithMLPForNER(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size, hidden_dim),
             nn.ReLU(),
-            nn.Dropout(0.1),
+            nn.Dropout(0.5),
             nn.Linear(hidden_dim, num_labels),
         )
+        
+        self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, ignore_index=-100)
 
     def forward(self, input_ids, attention_mask, labels=None):
         outputs = self.bert(input_ids, attention_mask=attention_mask)
@@ -62,14 +89,14 @@ class BertWithMLPForNER(nn.Module):
 
         loss = None
         if labels is not None:
-            loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
-            loss = loss_fn(logits.view(-1, num_labels), labels.view(-1))
+            # loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
+            # loss = loss_fn(logits.view(-1, num_labels), labels.view(-1))
+            loss = self.loss_fn(logits.view(-1, num_labels), labels.view(-1))
 
         return {"loss": loss, "logits": logits}
 
 
-model = BertWithMLPForNER(model_name, num_labels)
-
+model = BertWithMLPForNER(model_name, num_labels, alpha=None, gamma=2.0)
 
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
