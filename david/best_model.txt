@@ -1,32 +1,32 @@
 === Best Model Information ===
-Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-2200
-Best Validation F1 Score: 0.948684
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-1760
+Best Validation F1 Score: 0.949329
 
 === Evaluation of Best Model on Test Set ===
- 96%|███████████████████████████████████████████████████████████████████████████████▉   | 52/54 [00:02<00:00, 18.43it/s]
+ 96%|███████████████████████████████████████████████████████████████████████████████▉   | 52/54 [00:02<00:00, 18.79it/s]
 Detailed Classification Report (6 decimal places):
               precision    recall  f1-score   support
 
-         LOC   0.929898  0.931573  0.930735      1666
-        MISC   0.767690  0.819088  0.792557       702
-         ORG   0.883586  0.913907  0.898491      1661
-         PER   0.960248  0.957276  0.958760      1615
+         LOC   0.931261  0.935174  0.933214      1666
+        MISC   0.772169  0.806268  0.788850       702
+         ORG   0.879908  0.917520  0.898320      1661
+         PER   0.961728  0.964706  0.963215      1615
 
-   micro avg   0.903411  0.919738  0.911501      5644
-   macro avg   0.885356  0.905461  0.895135      5644
-weighted avg   0.904778  0.919738  0.912078      5644
+   micro avg   0.904133  0.922395  0.913173      5644
+   macro avg   0.886267  0.905917  0.895900      5644
+weighted avg   0.905078  0.922395  0.913573      5644
 
-100%|███████████████████████████████████████████████████████████████████████████████████| 54/54 [00:03<00:00, 14.72it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████| 54/54 [00:03<00:00, 15.94it/s]
 Test Set Results for Best Model:
-eval_loss: 0.114451
-eval_accuracy: 0.856067
-eval_overall_precision: 0.903411
-eval_overall_recall: 0.919738
-eval_overall_f1: 0.911501
-eval_macro_precision: 0.885356
-eval_macro_recall: 0.905461
-eval_macro_f1: 0.895135
-eval_runtime: 3.748100
-eval_samples_per_second: 921.271000
-eval_steps_per_second: 14.407000
+eval_loss: 0.005472
+eval_accuracy: 0.860701
+eval_overall_precision: 0.904133
+eval_overall_recall: 0.922395
+eval_overall_f1: 0.913173
+eval_macro_precision: 0.886267
+eval_macro_recall: 0.905917
+eval_macro_f1: 0.895900
+eval_runtime: 3.464900
+eval_samples_per_second: 996.579000
+eval_steps_per_second: 15.585000
 epoch: 10.000000
