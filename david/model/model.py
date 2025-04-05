@@ -11,6 +11,11 @@ from transformers import (
 import torch.nn.functional as F
 from datasets import load_dataset, load_from_disk
 from seqeval.metrics import classification_report
+from torch import Tensor
+from typing import Optional
+
+from .focal_loss import FocalLoss
+from .dice_loss import DiceLoss
 
 # Step 1: Load Dataset and Labels
 dataset = load_from_disk("../conll2003_local")
@@ -31,31 +36,6 @@ wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 # Step 2: Load Tokenizer and Model with Custom MLP Head
 model_name = "bert-base-cased"
 tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
-
-class FocalLoss(nn.Module):
-    def __init__(self, alpha=None, gamma=2.0, ignore_index=-100, reduction='mean'):
-        super().__init__()
-        self.alpha = alpha  # Weighting factor per class (can be None)
-        self.gamma = gamma  # Focusing parameter (higher γ = more focus on hard examples)
-        self.ignore_index = ignore_index
-        self.reduction = reduction
-
-    def forward(self, inputs, targets):
-        ce_loss = F.cross_entropy(
-            inputs, 
-            targets, 
-            weight=self.alpha, 
-            ignore_index=self.ignore_index, 
-            reduction='none'
-        )
-        pt = torch.exp(-ce_loss)  # Probability of true class
-        focal_loss = (1 - pt) ** self.gamma * ce_loss  # Focal Loss formula
-
-        if self.reduction == 'mean':
-            return focal_loss.mean()
-        elif self.reduction == 'sum':
-            return focal_loss.sum()
-        return focal_loss
 
 # Custom Model Architecture
 class BertWithMLPForNER(nn.Module):
