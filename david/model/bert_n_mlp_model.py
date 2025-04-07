@@ -56,21 +56,21 @@ class BertWithMLPForNER(nn.Module):
         #     param.requires_grad = False
         
         # BiLSTM Layer
-        self.bilstm = nn.LSTM(
-            input_size=self.bert.config.hidden_size,
-            hidden_size=self.lstm_hidden_dim,
-            num_layers=1,
-            bidirectional=True,
-            batch_first=True,
-        )
+        # self.bilstm = nn.LSTM(
+        #     input_size=self.bert.config.hidden_size,
+        #     hidden_size=self.lstm_hidden_dim,
+        #     num_layers=1,
+        #     bidirectional=True,
+        #     batch_first=True,
+        # )
         
         # MLP Head (now takes BiLSTM output which is 2*lstm_hidden_dim)
-        self.mlp = nn.Sequential(
-            nn.Linear(2 * self.lstm_hidden_dim, hidden_dim),  # 2* because bidirectional
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(hidden_dim, num_labels),
-        )
+        # self.mlp = nn.Sequential(
+        #     nn.Linear(2 * self.lstm_hidden_dim, hidden_dim),  # 2* because bidirectional
+        #     nn.ReLU(),
+        #     nn.Dropout(0.5),
+        #     nn.Linear(hidden_dim, num_labels),
+        # )
 
         # Custom MLP Head
         self.mlp = nn.Sequential(
@@ -106,6 +106,7 @@ class BertWithMLPForNER(nn.Module):
         
         # Pass through BiLSTM
         lstm_output, _ = self.bilstm(sequence_output)
+        lstm_output = lstm_output + sequence_output  # Residual connection
         
         # Pass through MLP
         logits = self.mlp(lstm_output)
@@ -140,8 +141,7 @@ class BertWithMLPForNER(nn.Module):
 model = BertWithMLPForNER(
     model_name, 
     num_labels, 
-    loss_type='focal',
-    loss_kwargs={'alpha': None, 'gamma': 2.0, 'ignore_index': -100} 
+    loss_type='ce',
 )
 
 # For Dice Loss
@@ -197,6 +197,23 @@ def tokenize_and_align_labels(examples):
                 label_ids.append(-100)  # Subword (optional: use label[word_idx])
             previous_word_idx = word_idx
         labels.append(label_ids)
+    # for i, label in enumerate(examples["ner_tags"]):
+    #     word_ids = tokenized_inputs.word_ids(batch_index=i)
+    #     label_ids = []
+    #     current_label = None
+    #     for word_idx in word_ids:
+    #         # Special tokens get -100
+    #         if word_idx is None:
+    #             label_ids.append(-100)
+    #         # New word starts
+    #         elif word_idx != current_label:
+    #             label_ids.append(label[word_idx])
+    #             current_label = word_idx
+    #         # Subword of same word gets SAME label
+    #         else:
+    #             label_ids.append(label[word_idx])  # CHANGED FROM -100
+            
+    #     labels.append(label_ids)
 
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
@@ -268,6 +285,10 @@ def compute_metrics(p):
 
     return metrics
 
+# sample = tokenized_datasets_conll["train"][0]
+# print("First sample labels:", sample["labels"])
+# print("Label names:", label_names)
+# print("Tokenized text:", tokenizer.convert_ids_to_tokens(sample["input_ids"]))
 
 # Step 6: Training
 training_args = TrainingArguments(
@@ -292,14 +313,19 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_wikiann["train"],
+    train_dataset=tokenized_datasets_conll["train"],
     eval_dataset=tokenized_datasets_conll["validation"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
 )
 
-trainer.train()
+# Overfit a single batch
+# tiny_dataset = tokenized_datasets_conll["train"].select(range(100))
+# trainer.train_dataset = tiny_dataset
+# trainer.train()  # Should reach 100% accuracy quickly
+
+# trainer.train()
 
 # Then train on mixed dataset
 # mixed_train = concatenate_datasets([
@@ -311,8 +337,8 @@ trainer.train()
 # trainer.learning_rate = 2e-5  # reduced learning rate
 # trainer.train()
 
-trainer.train_dataset = tokenized_datasets_conll["train"]
-trainer.learning_rate = 1e-5
+# trainer.train_dataset = tokenized_datasets_conll["train"]
+# trainer.learning_rate = 2e-5
 trainer.train()
 
 # Step 7: Evaluate
