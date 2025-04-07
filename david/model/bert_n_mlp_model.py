@@ -45,6 +45,7 @@ tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 class BertWithMLPForNER(nn.Module):
     def __init__(self, model_name, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
         super().__init__()
+        self.lstm_hidden_dim = 128
         self.bert = AutoModelForTokenClassification.from_pretrained(
             "../../bert-base-cased-local",
             num_labels=num_labels,
@@ -53,6 +54,23 @@ class BertWithMLPForNER(nn.Module):
         # Freeze BERT (optional)
         # for param in self.bert.parameters():
         #     param.requires_grad = False
+        
+        # BiLSTM Layer
+        self.bilstm = nn.LSTM(
+            input_size=self.bert.config.hidden_size,
+            hidden_size=self.lstm_hidden_dim,
+            num_layers=1,
+            bidirectional=True,
+            batch_first=True,
+        )
+        
+        # MLP Head (now takes BiLSTM output which is 2*lstm_hidden_dim)
+        self.mlp = nn.Sequential(
+            nn.Linear(2 * self.lstm_hidden_dim, hidden_dim),  # 2* because bidirectional
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(hidden_dim, num_labels),
+        )
 
         # Custom MLP Head
         self.mlp = nn.Sequential(
@@ -77,11 +95,20 @@ class BertWithMLPForNER(nn.Module):
             self.loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
 
     def forward(self, input_ids, attention_mask, labels=None):
+        # outputs = self.bert(input_ids, attention_mask=attention_mask)
+        # sequence_output = outputs.hidden_states[-1]  # Last hidden state
+
+        # # Pass through MLP
+        # logits = self.mlp(sequence_output)
+        
         outputs = self.bert(input_ids, attention_mask=attention_mask)
         sequence_output = outputs.hidden_states[-1]  # Last hidden state
-
+        
+        # Pass through BiLSTM
+        lstm_output, _ = self.bilstm(sequence_output)
+        
         # Pass through MLP
-        logits = self.mlp(sequence_output)
+        logits = self.mlp(lstm_output)
 
         # loss = None
         # if labels is not None:
@@ -110,7 +137,12 @@ class BertWithMLPForNER(nn.Module):
         return {"loss": loss, "logits": logits}
 
 # Original
-# model = BertWithMLPForNER(model_name, num_labels, alpha=None, gamma=2.0)
+model = BertWithMLPForNER(
+    model_name, 
+    num_labels, 
+    loss_type='focal',
+    loss_kwargs={'alpha': None, 'gamma': 2.0, 'ignore_index': -100} 
+)
 
 # For Dice Loss
 # model = BertWithMLPForNER(
@@ -134,12 +166,12 @@ class BertWithMLPForNER(nn.Module):
 # )
 
 # For Self Adj Dice Loss
-model = BertWithMLPForNER(
-    model_name, 
-    num_labels, 
-    loss_type='self_adj_dice',
-    loss_kwargs={'alpha': 1.0, 'gamma': 1.0, 'reduction': 'mean'}
-)
+# model = BertWithMLPForNER(
+#     model_name, 
+#     num_labels, 
+#     loss_type='self_adj_dice',
+#     loss_kwargs={'alpha': 1.0, 'gamma': 1.0, 'reduction': 'mean'}
+# )
 
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
@@ -242,7 +274,7 @@ training_args = TrainingArguments(
     output_dir="../../../autodl-fs/ner_results",
     per_device_train_batch_size=64,
     per_device_eval_batch_size=64,
-    num_train_epochs=10,
+    num_train_epochs=1,
     learning_rate=2e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
