@@ -1,32 +1,103 @@
+{'eval_loss': 34.863216400146484, 'eval_accuracy': 0.86128, 'eval_overall_precision': 0.910948, 'eval_overall_recall': 0.924344, 'eval_overall_f1': 0.917597, 'eval_macro_precision': 0.895903, 'eval_macro_recall': 0.911388, 'eval_macro_f1': 0.903471, 'eval_runtime': 4.5399, 'eval_samples_per_second': 760.592, 'eval_steps_per_second': 23.789, 'epoch': 5.0}
+
 === Best Model Information ===
-Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-1760
-Best Validation F1 Score: 0.949329
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-2195
+Best Validation F1 Score: 0.952541
 
 === Evaluation of Best Model on Test Set ===
- 96%|███████████████████████████████████████████████████████████████████████████████▉   | 52/54 [00:02<00:00, 18.79it/s]
+ 97%|██████████████████████████████████████████████████████████████████████████████▊  | 105/108 [00:03<00:00, 31.05it/s]
 Detailed Classification Report (6 decimal places):
               precision    recall  f1-score   support
 
-         LOC   0.931261  0.935174  0.933214      1666
-        MISC   0.772169  0.806268  0.788850       702
-         ORG   0.879908  0.917520  0.898320      1661
-         PER   0.961728  0.964706  0.963215      1615
+         LOC   0.939230  0.936975  0.938101      1666
+        MISC   0.799180  0.833333  0.815900       702
+         ORG   0.888760  0.923540  0.905816      1661
+         PER   0.956441  0.951703  0.954066      1615
 
-   micro avg   0.904133  0.922395  0.913173      5644
-   macro avg   0.886267  0.905917  0.895900      5644
-weighted avg   0.905078  0.922395  0.913573      5644
+   micro avg   0.910948  0.924344  0.917597      5644
+   macro avg   0.895903  0.911388  0.903471      5644
+weighted avg   0.911882  0.924344  0.917969      5644
 
-100%|███████████████████████████████████████████████████████████████████████████████████| 54/54 [00:03<00:00, 15.94it/s]
+100%|█████████████████████████████████████████████████████████████████████████████████| 108/108 [00:04<00:00, 25.85it/s]
 Test Set Results for Best Model:
-eval_loss: 0.005472
-eval_accuracy: 0.860701
-eval_overall_precision: 0.904133
-eval_overall_recall: 0.922395
-eval_overall_f1: 0.913173
-eval_macro_precision: 0.886267
-eval_macro_recall: 0.905917
-eval_macro_f1: 0.895900
-eval_runtime: 3.464900
-eval_samples_per_second: 996.579000
-eval_steps_per_second: 15.585000
+eval_loss: 34.863216
+eval_accuracy: 0.861280
+eval_overall_precision: 0.910948
+eval_overall_recall: 0.924344
+eval_overall_f1: 0.917597
+eval_macro_precision: 0.895903
+eval_macro_recall: 0.911388
+eval_macro_f1: 0.903471
+eval_runtime: 4.221000
+eval_samples_per_second: 818.058000
+eval_steps_per_second: 25.587000
+epoch: 5.000000
+
+=== Best Model Information ===
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-1100
+Best Validation F1 Score: 0.952397
+
+=== Evaluation of Best Model on Test Set ===
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:03<00:00,  7.52it/s]
+Detailed Classification Report (6 decimal places):
+              precision    recall  f1-score   support
+
+         LOC   0.932813  0.933373  0.933093      1666
+        MISC   0.765873  0.824786  0.794239       702
+         ORG   0.894366  0.917520  0.905795      1661
+         PER   0.962182  0.960991  0.961586      1615
+
+   micro avg   0.907666  0.923104  0.915320      5644
+   macro avg   0.888809  0.909167  0.898678      5644
+weighted avg   0.909138  0.923104  0.915942      5644
+
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:04<00:00,  6.17it/s]
+Test Set Results for Best Model:
+eval_loss: 1.724731
+eval_accuracy: 0.862149
+eval_overall_precision: 0.907666
+eval_overall_recall: 0.923104
+eval_overall_f1: 0.915320
+eval_macro_precision: 0.888809
+eval_macro_recall: 0.909167
+eval_macro_f1: 0.898678
+eval_runtime: 4.555100
+eval_samples_per_second: 758.043000
+eval_steps_per_second: 5.927000
 epoch: 10.000000
+Test results and hyperparameters saved to test_results_and_hparams.txt
+
+
+=== Best Model Information ===
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-990
+Best Validation F1 Score: 0.958672
+
+=== Evaluation of Best Model on Test Set ===
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:03<00:00,  8.37it/s]
+Detailed Classification Report (6 decimal places):
+              precision    recall  f1-score   support
+
+         LOC   0.939157  0.935774  0.937462      1666
+        MISC   0.785047  0.837607  0.810476       702
+         ORG   0.885698  0.928356  0.906526      1661
+         PER   0.976101  0.960396  0.968185      1616
+
+   micro avg   0.913066  0.928432  0.920685      5645
+   macro avg   0.896500  0.915533  0.905662      5645
+weighted avg   0.914838  0.928432  0.921363      5645
+
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 27/27 [00:04<00:00,  6.66it/s]
+Test Set Results for Best Model:
+eval_loss: 1.268769
+eval_accuracy: 0.866783
+eval_overall_precision: 0.913066
+eval_overall_recall: 0.928432
+eval_overall_f1: 0.920685
+eval_macro_precision: 0.896500
+eval_macro_recall: 0.915533
+eval_macro_f1: 0.905662
+eval_runtime: 4.226900
+eval_samples_per_second: 816.919000
+eval_steps_per_second: 6.388000
+epoch: 10.000000
+Test results and hyperparameters saved to test_results_and_hparams.txt

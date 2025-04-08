@@ -1,0 +1,860 @@
+=== Model Parameter Shapes and Best F1 Score ===
+
+Best Validation F1 Score: 0.001992
+
+Model Parameter Shapes:
+--------------------------------------------------
+Parameter: bert.bert.embeddings.word_embeddings.weight
+Shape: [28996, 768]
+Number of elements: 22268928
+
+Parameter: bert.bert.embeddings.position_embeddings.weight
+Shape: [512, 768]
+Number of elements: 393216
+
+Parameter: bert.bert.embeddings.token_type_embeddings.weight
+Shape: [2, 768]
+Number of elements: 1536
+
+Parameter: bert.bert.embeddings.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.embeddings.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.0.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.0.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.0.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.0.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.0.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.0.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.0.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.0.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.1.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.1.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.1.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.1.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.1.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.1.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.1.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.1.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.2.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.2.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.2.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.2.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.2.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.2.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.2.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.2.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.3.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.3.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.3.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.3.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.3.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.3.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.3.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.3.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.4.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.4.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.4.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.4.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.4.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.4.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.4.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.4.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.5.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.5.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.5.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.5.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.5.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.5.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.5.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.5.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.6.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.6.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.6.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.6.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.6.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.6.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.6.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.6.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.7.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.7.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.7.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.7.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.7.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.7.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.7.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.7.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.8.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.8.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.8.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.8.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.8.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.8.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.8.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.8.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.9.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.9.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.9.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.9.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.9.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.9.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.9.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.9.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.10.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.10.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.10.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.10.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.10.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.10.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.10.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.10.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.self.query.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.11.attention.self.query.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.self.key.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.11.attention.self.key.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.self.value.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.11.attention.self.value.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.output.dense.weight
+Shape: [768, 768]
+Number of elements: 589824
+
+Parameter: bert.bert.encoder.layer.11.attention.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.attention.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.intermediate.dense.weight
+Shape: [3072, 768]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.11.intermediate.dense.bias
+Shape: [3072]
+Number of elements: 3072
+
+Parameter: bert.bert.encoder.layer.11.output.dense.weight
+Shape: [768, 3072]
+Number of elements: 2359296
+
+Parameter: bert.bert.encoder.layer.11.output.dense.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.output.LayerNorm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.bert.encoder.layer.11.output.LayerNorm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: bert.classifier.weight
+Shape: [9, 768]
+Number of elements: 6912
+
+Parameter: bert.classifier.bias
+Shape: [9]
+Number of elements: 9
+
+Parameter: bilstm.weight_ih_l0
+Shape: [1536, 768]
+Number of elements: 1179648
+
+Parameter: bilstm.weight_hh_l0
+Shape: [1536, 384]
+Number of elements: 589824
+
+Parameter: bilstm.bias_ih_l0
+Shape: [1536]
+Number of elements: 1536
+
+Parameter: bilstm.bias_hh_l0
+Shape: [1536]
+Number of elements: 1536
+
+Parameter: bilstm.weight_ih_l0_reverse
+Shape: [1536, 768]
+Number of elements: 1179648
+
+Parameter: bilstm.weight_hh_l0_reverse
+Shape: [1536, 384]
+Number of elements: 589824
+
+Parameter: bilstm.bias_ih_l0_reverse
+Shape: [1536]
+Number of elements: 1536
+
+Parameter: bilstm.bias_hh_l0_reverse
+Shape: [1536]
+Number of elements: 1536
+
+Parameter: lstm_norm.weight
+Shape: [768]
+Number of elements: 768
+
+Parameter: lstm_norm.bias
+Shape: [768]
+Number of elements: 768
+
+Parameter: mlp.0.weight
+Shape: [256, 768]
+Number of elements: 196608
+
+Parameter: mlp.0.bias
+Shape: [256]
+Number of elements: 256
+
+Parameter: mlp.3.weight
+Shape: [9, 256]
+Number of elements: 2304
+
+Parameter: mlp.3.bias
+Shape: [9]
+Number of elements: 9
+
+--------------------------------------------------
+Total number of parameters: 111472402
