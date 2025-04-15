@@ -4,11 +4,15 @@ import torch.optim as optim
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+from datasets import load_from_disk
+from transformers import AutoTokenizer
+from collections import Counter
 
 from position import PositionalEncoding
 from tranfomer import TransformerBlock
 
-
+# Model Components
 class TokenEmbedding(nn.Module):
     def __init__(self, vocab_size, embed_size):
         super().__init__()
@@ -16,7 +20,6 @@ class TokenEmbedding(nn.Module):
 
     def forward(self, x):
         return self.embedding(x)
-
 
 class CustomBERTNER(nn.Module):
     def __init__(self, vocab_size, embed_size=768, num_layers=6, heads=8, forward_expansion=8, dropout=0.2, max_len=512,
@@ -42,57 +45,25 @@ class CustomBERTNER(nn.Module):
         x = self.norm(x)
         return self.classifier(x)  # Output shape: (batch_size, seq_length, num_classes)
 
+# Dataset Class
+class CoNLLDataset(Dataset):
+    def __init__(self, tokenized_data):
+        self.input_ids = tokenized_data["input_ids"]
+        self.attention_mask = tokenized_data["attention_mask"]
+        self.labels = tokenized_data["labels"]
 
-from datasets import load_from_disk
-from transformers import AutoTokenizer
-from collections import Counter
-# Load CoNLL-2003 dataset
-dataset = load_from_disk("../conll2003_local")
+    def __len__(self):
+        return len(self.input_ids)
 
-# Check available splits
-print(dataset)
+    def __getitem__(self, idx):
+        return {
+            "input_ids": torch.tensor(self.input_ids[idx]),
+            "attention_mask": torch.tensor(self.attention_mask[idx]),
+            "labels": torch.tensor(self.labels[idx])
+        }
 
-# Use a BERT tokenizer (you can choose any, but we won't use its weights)
-tokenizer = AutoTokenizer.from_pretrained("../bert-base-cased-local")
-
-# Tokenize a sample sentence
-example = dataset["train"][0]["tokens"]
-tokenized_example = tokenizer(example, is_split_into_words=True, padding="max_length", truncation=True, max_length=50)
-
-print(tokenized_example)
-
-# Get all labels from the dataset
-all_labels = [label for data in dataset["train"]["ner_tags"] for label in data]
-
-# Count occurrences of each class
-label_counts = Counter(all_labels)
-total_samples = sum(label_counts.values())
-
-# Compute class weights (inverse of frequency)
-num_classes = len(dataset["train"].features["ner_tags"].feature.names)
-class_weights = torch.tensor([total_samples / (label_counts[i] + 1e-6) for i in range(num_classes)], dtype=torch.float)
-
-# Normalize weights (optional, but recommended)
-class_weights = class_weights / class_weights.sum()
-print("Class Weights:", class_weights)
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-epoch_size = 30
-batch_size = 12
-learning_rate = 5.0e-6
-print(f"Training in epoch_size: {epoch_size}, batch_size: {batch_size}, learning_rate: {learning_rate}, device: {device}")
-
-model = CustomBERTNER(vocab_size=tokenizer.vocab_size,
-                      num_classes=len(dataset['train'].features['ner_tags'].feature.names)).to(device)
-
-
-
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-# Move class_weights to the same device as the model
-class_weights = class_weights.to(device)
-
-
-def tokenize_and_align_labels(examples):
+# Data Processing Functions
+def tokenize_and_align_labels(examples, tokenizer):
     tokenized_inputs = tokenizer(examples["tokens"], truncation=True, padding="max_length", max_length=50,
                                  is_split_into_words=True)
 
@@ -114,87 +85,18 @@ def tokenize_and_align_labels(examples):
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
 
+def compute_class_weights(dataset):
+    all_labels = [label for data in dataset["train"]["ner_tags"] for label in data]
+    label_counts = Counter(all_labels)
+    total_samples = sum(label_counts.values())
+    num_classes = len(dataset["train"].features["ner_tags"].feature.names)
+    
+    class_weights = torch.tensor([total_samples / (label_counts[i] + 1e-6) for i in range(num_classes)], dtype=torch.float)
+    class_weights = class_weights / class_weights.sum()
+    return class_weights
 
-# Preprocess dataset
-tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True)
-
-class CoNLLDataset(torch.utils.data.Dataset):
-    def __init__(self, tokenized_data):
-        self.input_ids = tokenized_data["input_ids"]
-        self.attention_mask = tokenized_data["attention_mask"]
-        self.labels = tokenized_data["labels"]
-
-    def __len__(self):
-        return len(self.input_ids)
-
-    def __getitem__(self, idx):
-        return {
-            "input_ids": torch.tensor(self.input_ids[idx]),
-            "attention_mask": torch.tensor(self.attention_mask[idx]),
-            "labels": torch.tensor(self.labels[idx])
-        }
-
-
-
-train_dataset = CoNLLDataset(tokenized_datasets["train"])
-val_dataset = CoNLLDataset(tokenized_datasets["validation"])
-test_dataset = CoNLLDataset(tokenized_datasets["test"])
-
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-
-# # Define the weighted loss function
-# criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
-#
-# # Training loop
-# for epoch in range(epoch_size//2):
-#     model.train()
-#     total_loss = 0
-#     for batch in train_loader:
-#         input_ids = batch["input_ids"].to(device)
-#         attention_mask = batch["attention_mask"].to(device)
-#         labels = batch["labels"].to(device)
-#
-#         optimizer.zero_grad()
-#         outputs = model(input_ids, attention_mask)
-#
-#         # Compute loss with class weights
-#         loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
-#         loss.backward()
-#         optimizer.step()
-#
-#         total_loss += loss.item()
-#
-#     print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
-#
-
-criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
-# criterion = nn.CrossEntropyLoss(ignore_index=-100)
-for epoch in range(epoch_size):
-    model.train()
-    total_loss = 0
-    for batch in train_loader:
-        input_ids = batch["input_ids"].to(device)
-        attention_mask = batch["attention_mask"].to(device)
-        labels = batch["labels"].to(device)
-
-        optimizer.zero_grad()
-        outputs = model(input_ids, attention_mask)
-
-        # Compute loss with class weights
-        loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
-        loss.backward()
-        optimizer.step()
-
-        total_loss += loss.item()
-
-    print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
-
-from sklearn.metrics import classification_report
-
-
-def evaluate(model, data_loader):
+# Evaluation Function
+def evaluate(model, data_loader, device):
     model.eval()
     all_preds, all_labels = [], []
 
@@ -216,12 +118,80 @@ def evaluate(model, data_loader):
 
     return classification_report(all_labels, all_preds, digits=4)
 
+# Training Setup
+def setup_training():
+    # Load dataset and tokenizer
+    dataset = load_from_disk("../conll2003_local")
+    tokenizer = AutoTokenizer.from_pretrained("../bert-base-cased-local")
+    
+    # Compute class weights
+    class_weights = compute_class_weights(dataset)
+    
+    # Setup device
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # Training parameters
+    epoch_size = 30
+    batch_size = 12
+    learning_rate = 5.0e-6
+    
+    # Initialize model
+    model = CustomBERTNER(
+        vocab_size=tokenizer.vocab_size,
+        num_classes=len(dataset['train'].features['ner_tags'].feature.names)
+    ).to(device)
+    
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    class_weights = class_weights.to(device)
+    
+    # Process datasets
+    tokenized_datasets = dataset.map(
+        lambda x: tokenize_and_align_labels(x, tokenizer),
+        batched=True
+    )
+    
+    # Create datasets and dataloaders
+    train_dataset = CoNLLDataset(tokenized_datasets["train"])
+    val_dataset = CoNLLDataset(tokenized_datasets["validation"])
+    test_dataset = CoNLLDataset(tokenized_datasets["test"])
+    
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    
+    return model, optimizer, train_loader, val_loader, test_loader, device, class_weights, epoch_size
 
-print("Evaluation Report on Training Data:")
-print(evaluate(model, train_loader))
+# Training Loop
+def train_model(model, optimizer, train_loader, val_loader, test_loader, device, class_weights, epoch_size):
+    criterion = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+    
+    for epoch in range(epoch_size):
+        model.train()
+        total_loss = 0
+        for batch in train_loader:
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            labels = batch["labels"].to(device)
 
-print("Evaluation Report on Validation Data:")
-print(evaluate(model, val_loader))
+            optimizer.zero_grad()
+            outputs = model(input_ids, attention_mask)
+            loss = criterion(outputs.view(-1, outputs.size(-1)), labels.view(-1))
+            loss.backward()
+            optimizer.step()
 
-print("Evaluation Report on Test Data:")
-print(evaluate(model, test_loader))
+            total_loss += loss.item()
+
+        print(f"Epoch {epoch + 1}, Loss: {total_loss / len(train_loader):.4f}")
+        
+        # Evaluate after each epoch
+        print("\nEvaluation Reports:")
+        print("Training Data:")
+        print(evaluate(model, train_loader, device))
+        print("\nValidation Data:")
+        print(evaluate(model, val_loader, device))
+        print("\nTest Data:")
+        print(evaluate(model, test_loader, device))
+
+if __name__ == "__main__":
+    model, optimizer, train_loader, val_loader, test_loader, device, class_weights, epoch_size = setup_training()
+    train_model(model, optimizer, train_loader, val_loader, test_loader, device, class_weights, epoch_size)
