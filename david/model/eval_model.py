@@ -6,6 +6,8 @@ from model import BertWithMLPForNER  # Replace with your actual model file
 from utils.save_best_model import save_test_results_and_hparams
 from seqeval.metrics import classification_report
 import numpy as np
+from safetensors.torch import load_file
+
 
 # Argument parser
 parser = argparse.ArgumentParser(description="Evaluate BERT+MLP model from a checkpoint.")
@@ -54,8 +56,9 @@ model = BertWithMLPForNER(
     num_labels=num_labels,
     loss_type='ce'  # Adjust if using focal, dice, etc.
 )
-model = BertWithMLPForNER.from_pretrained(args.checkpoint)
-model.eval()
+state_dict = load_file(f"{args.checkpoint}/model.safetensors")
+model.load_state_dict(state_dict)
+
 
 # Define compute_metrics function
 def compute_metrics(p):
