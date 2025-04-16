@@ -101,3 +101,38 @@ eval_samples_per_second: 816.919000
 eval_steps_per_second: 6.388000
 epoch: 10.000000
 Test results and hyperparameters saved to test_results_and_hparams.txt
+
+
+=== Best Model Information ===
+Best Model Checkpoint: ../../../autodl-fs/ner_results/checkpoint-1100
+Best Validation F1 Score: 0.959228
+
+=== Evaluation of Best Model on Test Set ===
+100%|███████████████████████████████████████████████████████████████████████████████████| 27/27 [00:05<00:00,  5.03it/s]
+Detailed Classification Report (6 decimal places):
+              precision    recall  f1-score   support
+
+         LOC   0.943602  0.933974  0.938763      1666
+        MISC   0.786290  0.833333  0.809129       702
+         ORG   0.891643  0.931367  0.911072      1661
+         PER   0.967702  0.964109  0.965902      1616
+
+   micro avg   0.914256  0.929318  0.921725      5645
+   macro avg   0.897309  0.915696  0.906216      5645
+weighted avg   0.915650  0.929318  0.922263      5645
+
+100%|███████████████████████████████████████████████████████████████████████████████████| 27/27 [00:05<00:00,  4.54it/s]
+Test Set Results for Best Model:
+eval_loss: 1.410332
+eval_accuracy: 0.870547
+eval_overall_precision: 0.914256
+eval_overall_recall: 0.929318
+eval_overall_f1: 0.921725
+eval_macro_precision: 0.897309
+eval_macro_recall: 0.915696
+eval_macro_f1: 0.906216
+eval_runtime: 6.171100
+eval_samples_per_second: 559.546000
+eval_steps_per_second: 4.375000
+epoch: 10.000000
+Test results and hyperparameters saved to test_results_and_hparams.txt

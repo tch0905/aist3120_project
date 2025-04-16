@@ -112,24 +112,24 @@ class BertWithMLPForNER(nn.Module):
             # self.loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
 
     def forward(self, input_ids, attention_mask, labels=None):
-        # outputs = self.bert(input_ids, attention_mask=attention_mask)
-        # sequence_output = outputs.hidden_states[-1]  # Last hidden state
+        outputs = self.bert(input_ids, attention_mask=attention_mask)
+        sequence_output = outputs.hidden_states[-1]  # Last hidden state
 
-        # # Pass through MLP
-        # logits = self.mlp(sequence_output)
+        # Pass through MLP
+        logits = self.mlp(sequence_output)
         
         outputs = self.bert(input_ids, attention_mask=attention_mask)
         sequence_output = outputs.hidden_states[-1]
         
         # BiLSTM with better initialization
-        lstm_output, _ = self.bilstm(sequence_output)
-        lstm_output = self.lstm_norm(lstm_output)
+        # lstm_output, _ = self.bilstm(sequence_output)
+        # lstm_output = self.lstm_norm(lstm_output)
         
-        # Scaled residual connection
-        scaled_factor = 1
-        combined = sequence_output + scaled_factor * lstm_output  # Reduced impact
+        # # Scaled residual connection
+        # scaled_factor = 1
+        # combined = sequence_output + scaled_factor * lstm_output  # Reduced impact
         
-        logits = self.mlp(combined)
+        # logits = self.mlp(combined)
 
         # loss = None
         # if labels is not None:
@@ -429,10 +429,10 @@ for epoch in range(5):
 # trainer.learning_rate = 2e-5  # reduced learning rate
 # trainer.train()
 
-# print("=== Now training on conll ===")
-# trainer.train_dataset = tokenized_datasets_conll["train"]
-# trainer.learning_rate = 2e-5
-# trainer.train()
+print("=== Now training on conll ===")
+trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.learning_rate = 2e-5
+trainer.train()
 
 # Step 7: Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
