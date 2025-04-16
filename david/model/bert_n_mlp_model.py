@@ -48,6 +48,89 @@ tokenizer = AutoTokenizer.from_pretrained(
     add_prefix_space=True
 )
 
+
+def augment_batch_with_random_concat(batch, tokenizer, max_length=512, pad_label_id=-100):
+    input_ids = batch["input_ids"]
+    attention_mask = batch["attention_mask"]
+    labels = batch["labels"]
+
+    batch_size = input_ids.size(0)
+
+    # Generate a random permutation of indices for pairing
+    permuted_indices = torch.randperm(batch_size)
+
+    # New containers for augmented samples
+    new_input_ids = []
+    new_attention_masks = []
+    new_labels = []
+
+    for i in range(batch_size):
+        # Get original and random sample
+        original_input = input_ids[i]
+        original_mask = attention_mask[i]
+        original_label = labels[i]
+
+        random_input = input_ids[permuted_indices[i]]
+        random_mask = attention_mask[permuted_indices[i]]
+        random_label = labels[permuted_indices[i]]
+
+        # Remove padding from input and label using attention_mask
+        original_input_trimmed = original_input[original_mask.bool()]
+        random_input_trimmed = random_input[random_mask.bool()]
+
+        original_label_trimmed = original_label[original_mask.bool()]
+        random_label_trimmed = random_label[random_mask.bool()]
+
+        # Concatenate input and label
+        concat_input = torch.cat([original_input_trimmed, random_input_trimmed[1:]], dim=0)
+        concat_label = torch.cat([original_label_trimmed, random_label_trimmed[1:]], dim=0)
+
+        # Truncate if needed
+        concat_input = concat_input[:max_length]
+        concat_label = concat_label[:max_length]
+
+        # Create attention mask
+        concat_attention_mask = torch.ones_like(concat_input)
+
+        # Pad input, label, and attention mask to max_length
+        pad_len = max_length - concat_input.size(0)
+        if pad_len > 0:
+            concat_input = torch.cat([concat_input, torch.full((pad_len,), tokenizer.pad_token_id, dtype=torch.long)])
+            concat_attention_mask = torch.cat([concat_attention_mask, torch.zeros(pad_len, dtype=torch.long)])
+            concat_label = torch.cat([concat_label, torch.full((pad_len,), pad_label_id, dtype=torch.long)])
+
+        # Append to new batch
+        new_input_ids.append(concat_input)
+        new_attention_masks.append(concat_attention_mask)
+        new_labels.append(concat_label)
+
+    # Stack into tensors
+    augmented_batch = {
+        "input_ids": torch.stack(new_input_ids).to(input_ids.device),
+        "attention_mask": torch.stack(new_attention_masks).to(attention_mask.device),
+        "labels": torch.stack(new_labels).to(labels.device)
+    }
+
+    return augmented_batch
+
+class AugmentingDataCollator:
+    def __init__(self, tokenizer, max_length=512, pad_label_id=-100):
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+        self.pad_label_id = pad_label_id
+
+    def __call__(self, features):
+        # Convert list of dicts to batch dict of tensors
+        batch = {key: torch.nn.utils.rnn.pad_sequence(
+                    [torch.tensor(f[key]) for f in features],
+                    batch_first=True,
+                    padding_value=self.tokenizer.pad_token_id if key != "labels" else self.pad_label_id
+                )
+                for key in features[0].keys()}
+
+        # Apply your custom augmentation
+        return augment_batch_with_random_concat(batch, self.tokenizer, self.max_length, self.pad_label_id)
+
 # Custom Model Architecture
 class BertWithMLPForNER(nn.Module):
     def __init__(self, model_name, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
@@ -73,14 +156,6 @@ class BertWithMLPForNER(nn.Module):
         )
 
         self.lstm_norm = nn.LayerNorm(self.bert.config.hidden_size)
-        
-        # MLP Head (now takes BiLSTM output which is 2*lstm_hidden_dim)
-        # self.mlp = nn.Sequential(
-        #     nn.Linear(2 * self.lstm_hidden_dim, hidden_dim),  # 2* because bidirectional
-        #     nn.ReLU(),
-        #     nn.Dropout(0.5),
-        #     nn.Linear(hidden_dim, num_labels),
-        # )
 
         # Custom MLP Head
         self.mlp = nn.Sequential(
@@ -119,40 +194,6 @@ class BertWithMLPForNER(nn.Module):
         
         outputs = self.bert(input_ids, attention_mask=attention_mask)
         sequence_output = outputs.hidden_states[-1]
-        
-        # BiLSTM with better initialization
-        # lstm_output, _ = self.bilstm(sequence_output)
-        # lstm_output = self.lstm_norm(lstm_output)
-        
-        # # Scaled residual connection
-        # scaled_factor = 1
-        # combined = sequence_output + scaled_factor * lstm_output  # Reduced impact
-        
-        # logits = self.mlp(combined)
-
-        # loss = None
-        # if labels is not None:
-        #     # loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
-        #     # loss = loss_fn(logits.view(-1, num_labels), labels.view(-1))
-        #     loss = self.loss_fn(logits.view(-1, num_labels), labels.view(-1))
-        
-        # loss = None
-        # if labels is not None:
-        #     if self.loss_type == 'self_adj_dice':
-        #         # Flatten logits and labels
-        #         active_logits = logits.view(-1, self.num_labels)  # (batch_size * seq_len, num_labels)
-        #         active_labels = labels.view(-1)  # (batch_size * seq_len)
-                
-        #         # Filter out padding tokens (ignore_index=-100)
-        #         valid_indices = active_labels != -100
-        #         active_logits = active_logits[valid_indices]
-        #         active_labels = active_labels[valid_indices]
-                
-        #         # Compute loss (SelfAdjDiceLoss handles softmax internally)
-        #         loss = self.loss_fn(active_logits, active_labels)
-        #     else:
-        #         # Original loss handling (Dice/Focal/CrossEntropy)
-        #         loss = self.loss_fn(logits.view(-1, self.num_labels), labels.view(-1))
 
         loss = None
         if labels is not None:
@@ -185,36 +226,6 @@ model = BertWithMLPForNER(
     num_labels, 
     loss_type='ce',
 )
-
-# For Dice Loss
-# model = BertWithMLPForNER(
-#     model_name,
-#     num_labels,
-#     loss_type='dice',
-#     loss_kwargs={'smooth': 1e-5, 'reduction': 'mean'}
-# )
-
-# For Focal Loss
-# focal_loss_kwargs = {
-#     'alpha': None,
-#     'gamma': 2.0,
-#     'ignore_index': -100
-# }
-# model = BertWithMLPForNER(
-#     model_name, 
-#     num_labels, 
-#     loss_type='focal',
-#     loss_kwargs=focal_loss_kwargs
-# )
-
-# For Self Adj Dice Loss, trash
-# model = BertWithMLPForNER(
-#     model_name, 
-#     num_labels, 
-#     loss_type='self_adj_dice',
-#     loss_kwargs={'alpha': 1.0, 'gamma': 1.0, 'reduction': 'mean'}
-# )
-
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
     tokenized_inputs = tokenizer(
@@ -239,24 +250,6 @@ def tokenize_and_align_labels(examples):
                 label_ids.append(-100)  # Subword (optional: use label[word_idx])
             previous_word_idx = word_idx
         labels.append(label_ids)
-    # for i, label in enumerate(examples["ner_tags"]):
-    #     word_ids = tokenized_inputs.word_ids(batch_index=i)
-    #     label_ids = []
-    #     current_label = None
-    #     for word_idx in word_ids:
-    #         # Special tokens get -100
-    #         if word_idx is None:
-    #             label_ids.append(-100)
-    #         # New word starts
-    #         elif word_idx != current_label:
-    #             label_ids.append(label[word_idx])
-    #             current_label = word_idx
-    #         # Subword of same word gets SAME label
-    #         else:
-    #             label_ids.append(label[word_idx])  # CHANGED FROM -100
-            
-    #     labels.append(label_ids)
-
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
 
@@ -361,30 +354,30 @@ training_args = TrainingArguments(
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
-    save_total_limit=3,  # NEW: Limit to 3 checkpoint (best 3 model only)
-    load_best_model_at_end=True,  # NEW: Load the best model at the end
-    metric_for_best_model="eval_overall_f1",  # NEW: Define "best" based on F1
-    greater_is_better=True,  # NEW: Higher F1 is better
+    save_total_limit=3,
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_overall_f1",
+    greater_is_better=True,
     logging_dir="./logs",
     report_to="none",
     logging_steps=10,
-    lr_scheduler_type="cosine_with_restarts",  # Better than linear
-    warmup_steps=500,  # More precise than ratio
+    lr_scheduler_type="cosine_with_restarts",
+    warmup_steps=500,
     # gradient_accumulation_steps=2,
     # fp16=True,
     # label_smoothing_factor=0.1,
 )
 
+# Create the trainer
 trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=tokenized_datasets_wikiann["train"],
     eval_dataset=tokenized_datasets_conll["validation"],
-    data_collator=data_collator,
     tokenizer=tokenizer,
-    compute_metrics=compute_metrics,
+    data_collator=data_collator,
+    compute_metrics=compute_metrics
 )
-
 trainer.train()
 
 # Then train on mixed dataset
