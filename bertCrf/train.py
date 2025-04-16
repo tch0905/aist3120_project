@@ -5,8 +5,8 @@ from transformers import (
 )
 from tqdm import tqdm
 from datasets import load_dataset, load_from_disk, concatenate_datasets
-from bertCrf.conllDataset import CoNLLDataset
-from bertCrf.model import BertWithMLPForNER
+from conllDataset import CoNLLDataset
+from model import BertWithMLPForNER
 from utils import augment_batch_with_random_concat
 
 
