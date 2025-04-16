@@ -58,7 +58,7 @@ tokenized_datasets = dataset.map(tokenize_and_align_labels, batched=True)
 # Load model from checkpoint
 model = BertWithMLPForNER(
     num_labels=num_labels,
-    loss_type='ce'  # Adjust if using focal, dice, etc.
+    loss_type='focal'  # Adjust if using focal, dice, etc.
 )
 state_dict = load_file(f"{args.checkpoint}/model.safetensors")
 model.load_state_dict(state_dict)
