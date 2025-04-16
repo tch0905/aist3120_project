@@ -373,7 +373,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=tokenized_datasets_wikiann["train"],
-    eval_dataset=tokenized_datasets_conll["validation"],
+    eval_dataset=tokenized_datasets_wikiann["validation"],
     tokenizer=tokenizer,
     data_collator=data_collator,
     compute_metrics=compute_metrics
@@ -392,6 +392,7 @@ trainer.train()
 
 print("=== Now training on conll ===")
 trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.eval_dataset = tokenized_datasets_conll["validation"]
 trainer.learning_rate = 2e-5
 trainer.train()
 
