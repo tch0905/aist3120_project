@@ -409,6 +409,7 @@ for epoch in range(5):
         # Apply masking only after first epoch
         trainer.train_dataset = mask_tokens_in_dataset(
             tokenized_datasets_conll["train"].shuffle(),
+            tokenizer=tokenizer,
             mask_prob=0.1
         )
     else:
