@@ -6,7 +6,7 @@ from model import BertWithMLPForNER
 from transformers import (
     AutoTokenizer,
     DataCollatorForTokenClassification,
-    Trainer,
+    Trainer, TrainingArguments,
 )
 
 # Argument parser
@@ -53,12 +53,38 @@ tokenized_datasets_conll = dataset.map(tokenize_and_align_labels, batched=True)
 model = BertWithMLPForNER(num_labels=9)
 model.load_state_dict(torch.load(args.model_path))
 
+training_args = TrainingArguments(
+    output_dir="../../../autodl-fs/ner_results",
+    per_device_train_batch_size=128,
+    per_device_eval_batch_size=128,
+    num_train_epochs=10,
+    learning_rate=5e-5,
+    weight_decay=0.01,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    metric_for_best_model="eval_overall_f1",  # NEW: Define "best" based on F1
+    greater_is_better=True,  # NEW: Higher F1 is better
+    logging_dir="./logs",
+    report_to="none",
+    logging_steps=10,
+    lr_scheduler_type="cosine_with_restarts",  # Better than linear
+    warmup_steps=500,  # More precise than ratio
+    # gradient_accumulation_steps=2,
+    # fp16=True,
+    # label_smoothing_factor=0.1,
+)
+
 # Initialize Trainer
 trainer = Trainer(model=model)
 print(f"Best Validation F1 Score: {trainer.state.best_metric:.6f}")
 # Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
 print(results)
+f1_score = results.get("f1", None)  # Assuming "f1" is the key for the F1 score
+if f1_score is not None:
+    print(f"F1 Score: {f1_score:.6f}")
+else:
+    print("F1 Score not found in the results.")
 
 for metric, value in results.items():
     if isinstance(value, float):
