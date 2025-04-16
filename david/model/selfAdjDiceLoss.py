@@ -39,3 +39,36 @@ class SelfAdjDiceLoss(torch.nn.Module):
             return loss
         else:
             raise NotImplementedError(f"Reduction `{self.reduction}` is not supported.")
+            
+
+class DiceLoss(torch.nn.Module):
+    def __init__(self, mode: str = "standard", alpha: float = 1.0, gamma: float = 0.1, reduction: str = "sum"):
+        super().__init__()
+        self.mode = mode  # "self_adj" or "standard"
+        self.alpha = alpha
+        self.gamma = gamma
+        self.reduction = reduction
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        probs = torch.softmax(logits, dim=1)
+        
+        if self.mode == "self_adj":
+            # Self-adjusting Dice Loss
+            probs = torch.gather(probs, dim=1, index=targets.unsqueeze(1))
+            probs_with_factor = ((1 - probs) ** self.alpha) * probs
+            loss = 1 - (2 * probs_with_factor + self.gamma) / (probs_with_factor + 1 + self.gamma)
+        elif self.mode == "standard":
+            # Standard Dice Loss (requires one-hot targets)
+            targets_one_hot = torch.zeros_like(probs).scatter_(1, targets.unsqueeze(1), 1)
+            numerator = 2 * probs * targets_one_hot + self.gamma
+            denominator = probs.pow(2) + targets_one_hot.pow(2) + self.gamma
+            loss = 1 - (numerator / denominator).mean(dim=1)  # Mean over classes
+        else:
+            raise ValueError(f"Unknown mode: {self.mode}")
+
+        if self.reduction == "mean":
+            return loss.mean()
+        elif self.reduction == "sum":
+            return loss.sum()
+        else:
+            return loss  # "none"

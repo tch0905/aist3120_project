@@ -19,8 +19,8 @@ from typing import Optional
 from torchcrf import CRF
 
 from focal_loss import FocalLoss
-from dice_loss import DiceLoss
-from selfAdjDiceLoss import SelfAdjDiceLoss
+# from dice_loss import DiceLoss
+from selfAdjDiceLoss import SelfAdjDiceLoss, DiceLoss
 
 from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
 from utils.data_augment import mask_tokens_in_dataset
@@ -87,13 +87,13 @@ class BertWithMLPForNER(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size, hidden_dim),
             nn.ReLU(),
-            nn.Dropout(0.2),
+            # nn.Dropout(0.2),
             nn.Linear(hidden_dim, num_labels),
         )
 
         # CRF Layer
         self.crf = CRF(num_labels, batch_first=True)
-        self.use_crf = True
+        self.use_crf = False
         
         # self.loss_fn = FocalLoss(alpha=alpha, gamma=gamma, ignore_index=-100)
         self.num_labels = num_labels
@@ -107,9 +107,9 @@ class BertWithMLPForNER(nn.Module):
         elif loss_type == 'self_adj_dice':
             self.loss_fn = SelfAdjDiceLoss(**loss_kwargs)
         else:
-            class_weights = torch.tensor([1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0])
-            self.loss_fn = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
-            # self.loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
+            # class_weights = torch.tensor([1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0])
+            # self.loss_fn = nn.CrossEntropyLoss(weight=class_weights, ignore_index=-100)
+            self.loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
 
     def forward(self, input_ids, attention_mask, labels=None):
         outputs = self.bert(input_ids, attention_mask=attention_mask)
@@ -213,7 +213,7 @@ model = BertWithMLPForNER(
 #     model_name, 
 #     num_labels, 
 #     loss_type='self_adj_dice',
-#     loss_kwargs={'alpha': 1.0, 'gamma': 1.0, 'reduction': 'mean'}
+#     loss_kwargs={'alpha': 1.0, 'gamma': 0.1, 'reduction': 'mean'}
 # )
 
 # Step 3: Tokenize and Align Labels
@@ -357,8 +357,8 @@ training_args = TrainingArguments(
     output_dir="../../../autodl-fs/ner_results",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=10,
-    learning_rate=2e-5,
+    num_train_epochs=5,
+    learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
     save_strategy="epoch",
@@ -368,13 +368,31 @@ training_args = TrainingArguments(
     greater_is_better=True,  # NEW: Higher F1 is better
     logging_dir="./logs",
     report_to="none",
-    logging_steps=10,
+    logging_steps=32,
     lr_scheduler_type="cosine_with_restarts",  # Better than linear
     warmup_steps=500,  # More precise than ratio
     # gradient_accumulation_steps=2,
     # fp16=True,
     # label_smoothing_factor=0.1,
 )
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_datasets_wikiann["train"],
+    eval_dataset=tokenized_datasets_wikiann["validation"],
+    data_collator=data_collator,
+    tokenizer=tokenizer,
+    compute_metrics=compute_metrics,
+)
+
+trainer.train()
+
+trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.eval_dataset = tokenized_datasets_conll["validation"]
+training_args.learning_rate = 2e-5
+
+trainer.train()
 
 # trainer = Trainer(
 #     model=model,
@@ -386,23 +404,37 @@ training_args = TrainingArguments(
 #     compute_metrics=compute_metrics,
 # )
 
+# trainer.train_dataset = tokenized_datasets_conll["train"]
+# trainer.learning_rate = 2e-5
 # trainer.train()
 
 # tokenized_datasets_conll_masked = mask_tokens_in_dataset(
 #     tokenized_datasets_conll["train"].shuffle(),
 #     tokenizer=tokenizer,
-#     mask_prob=0.1
+#     mask_prob=0.2
 # )
 
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_datasets_conll["train"].shuffle(),
-    eval_dataset=tokenized_datasets_conll["validation"],
-    data_collator=data_collator,
-    tokenizer=tokenizer,
-    compute_metrics=compute_metrics,
-)
+# trainer = Trainer(
+#     model=model,
+#     args=training_args,
+#     train_dataset=tokenized_datasets_conll_masked,
+#     eval_dataset=tokenized_datasets_conll["validation"],
+#     data_collator=data_collator,
+#     tokenizer=tokenizer,
+#     compute_metrics=compute_metrics,
+# )
+
+# trainer.train()
+
+# trainer = Trainer(
+#     model=model,
+#     args=training_args,
+#     train_dataset=None,
+#     eval_dataset=tokenized_datasets_conll["validation"],
+#     data_collator=data_collator,
+#     tokenizer=tokenizer,
+#     compute_metrics=compute_metrics,
+# )
 
 # for epoch in range(5):
 #     print(f"\n=== Training Iteration {epoch+1} ===")
@@ -410,7 +442,7 @@ trainer = Trainer(
 #     # Set the dataset for this iteration with increasing masking
 #     # current_mask_prob = 0.15 * (epoch + 1) / 3  # Ranges from 5% to 15%
     
-#     if epoch > 0:
+#     if epoch > 0 and epoch < 4:
 #         # Apply masking only after first epoch
 #         trainer.train_dataset = mask_tokens_in_dataset(
 #             tokenized_datasets_conll["train"].shuffle(),
@@ -436,7 +468,7 @@ trainer = Trainer(
 # print("=== Now training on conll ===")
 # trainer.train_dataset = tokenized_datasets_conll["train"]
 # trainer.learning_rate = 2e-5
-trainer.train()
+# trainer.train()
 
 # Step 7: Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
