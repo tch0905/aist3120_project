@@ -6,7 +6,7 @@ from transformers import AutoModelForTokenClassification, AutoTokenizer
 from torchcrf import CRF
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "../roberta-base-local",
+    "/root/aist3120_project/roberta-base-local",
     add_prefix_space=True
 )
 
@@ -17,7 +17,7 @@ class BertWithMLPForNER(nn.Module):
         super().__init__()
         self.lstm_hidden_dim = 384
         self.bert = AutoModelForTokenClassification.from_pretrained(
-            "../roberta-base-local",
+            "/root/aist3120_project/roberta-base-local",
             num_labels=num_labels,
             output_hidden_states=True,
         )

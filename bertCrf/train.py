@@ -31,13 +31,13 @@ wikiann_dataset = load_from_disk("../wikiann_local")
 
 # tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 tokenizer = AutoTokenizer.from_pretrained(
-    "../roberta-base-local",
+    "/root/aist3120_project/roberta-base-local",
     add_prefix_space=True
 )
 
 def tokenize_and_align_labels(examples):
     tokenizer = AutoTokenizer.from_pretrained(
-        "../roberta-base-local",
+        "/root/aist3120_project/roberta-base-local",
         add_prefix_space=True
     )
     tokenized_inputs = tokenizer(
