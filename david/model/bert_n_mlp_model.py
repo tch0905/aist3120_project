@@ -70,9 +70,9 @@ def augment_batch_with_random_concat(batch, tokenizer, max_length=512, pad_label
         original_mask = attention_mask[i]
         original_label = labels[i]
 
-        random_input = input_ids[permuted_indices[i]]
-        random_mask = attention_mask[permuted_indices[i]]
-        random_label = labels[permuted_indices[i]]
+        random_input = input_ids[permuted_indices[i]][1:]
+        random_mask = attention_mask[permuted_indices[i]][1:]
+        random_label = labels[permuted_indices[i]][1:]
 
         # Remove padding from input and label using attention_mask
         original_input_trimmed = original_input[original_mask.bool()]
@@ -346,7 +346,7 @@ def compute_metrics(p):
 
 # Step 6: Training
 training_args = TrainingArguments(
-    output_dir="../../../autodl-fs/ner_results",
+    output_dir="./",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
     num_train_epochs=10,
