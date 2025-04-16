@@ -129,7 +129,7 @@ class AugmentingDataCollator:
 # Original
 model = BertWithMLPForNER(
     num_labels, 
-    loss_type='ce',
+    loss_type='focal',
 )
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
@@ -294,6 +294,10 @@ trainer.train()
 # trainer.train_dataset = mixed_train
 # trainer.learning_rate = 2e-5  # reduced learning rate
 # trainer.train()
+
+results = trainer.evaluate(tokenized_datasets_conll["test"])
+print("Test Result:")
+print(results)
 
 print("=== Now training on conll ===")
 trainer.train_dataset = tokenized_datasets_conll["train"]
