@@ -128,7 +128,6 @@ class AugmentingDataCollator:
 
 # Original
 model = BertWithMLPForNER(
-    model_name, 
     num_labels, 
     loss_type='ce',
 )
