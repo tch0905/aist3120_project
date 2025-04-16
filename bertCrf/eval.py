@@ -59,3 +59,9 @@ trainer = Trainer(model=model)
 # Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
 print(results)
+
+for metric, value in results.items():
+    if isinstance(value, float):
+        print(f"{metric}: {value:.6f}")
+    else:
+        print(f"{metric}: {value}")
