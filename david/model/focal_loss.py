@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 
 class FocalLoss(nn.Module):
-    def __init__(self, alpha=None, gamma=2.0, ignore_index=-100, reduction='sum'):
+    def __init__(self, alpha=None, gamma=1.0, ignore_index=-100, reduction='sum'):
         super().__init__()
         self.alpha = alpha  # Weighting factor per class (can be None)
         self.gamma = gamma  # Focusing parameter (higher γ = more focus on hard examples)
