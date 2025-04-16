@@ -54,7 +54,7 @@ model = BertWithMLPForNER(
     num_labels=num_labels,
     loss_type='ce'  # Adjust if using focal, dice, etc.
 )
-model.load_state_dict(torch.load(f"{args.checkpoint}/training_args.bin"))
+model = BertWithMLPForNER.from_pretrained(args.checkpoint)
 model.eval()
 
 # Define compute_metrics function
