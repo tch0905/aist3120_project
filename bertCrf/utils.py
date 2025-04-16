@@ -21,9 +21,9 @@ def augment_batch_with_random_concat(batch, tokenizer, max_length=512, pad_label
         original_mask = attention_mask[i]
         original_label = labels[i]
 
-        random_input = input_ids[permuted_indices[i]]
-        random_mask = attention_mask[permuted_indices[i]]
-        random_label = labels[permuted_indices[i]]
+        random_input = input_ids[permuted_indices[i]][1:]
+        random_mask = attention_mask[permuted_indices[i]][1:]
+        random_label = labels[permuted_indices[i]][1:]
 
         # Remove padding from input and label using attention_mask
         original_input_trimmed = original_input[original_mask.bool()]
@@ -33,8 +33,8 @@ def augment_batch_with_random_concat(batch, tokenizer, max_length=512, pad_label
         random_label_trimmed = random_label[random_mask.bool()]
 
         # Concatenate input and label
-        concat_input = torch.cat([original_input_trimmed, random_input_trimmed[1:]], dim=0)
-        concat_label = torch.cat([original_label_trimmed, random_label_trimmed[1:]], dim=0)
+        concat_input = torch.cat([original_input_trimmed, random_input_trimmed], dim=0)
+        concat_label = torch.cat([original_label_trimmed, random_label_trimmed], dim=0)
 
         # Truncate if needed
         concat_input = concat_input[:max_length]
