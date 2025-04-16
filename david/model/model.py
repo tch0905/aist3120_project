@@ -8,18 +8,11 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
-import torch.nn.functional as F
-from datasets import load_dataset, load_from_disk, concatenate_datasets
-from seqeval.metrics import classification_report
-from torch import Tensor
-from typing import Optional
 from torchcrf import CRF
 
 from focal_loss import FocalLoss
 from dice_loss import DiceLoss
 from selfAdjDiceLoss import SelfAdjDiceLoss
-
-from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
 
 
 tokenizer = AutoTokenizer.from_pretrained(
@@ -28,26 +21,13 @@ tokenizer = AutoTokenizer.from_pretrained(
 )
 
 class BertWithMLPForNER(nn.Module):
-    def __init__(self, model_name, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
+    def __init__(self, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
         super().__init__()
         self.lstm_hidden_dim = 384
         self.bert = AutoModelForTokenClassification.from_pretrained(
             "../../roberta-base-local",
             num_labels=num_labels,
             output_hidden_states=True,
-        )
-        # Freeze BERT (optional)
-        # for param in self.bert.parameters():
-        #     param.requires_grad = False
-
-        # BiLSTM Layer
-        self.bilstm = nn.LSTM(
-            input_size=self.bert.config.hidden_size,
-            hidden_size=self.lstm_hidden_dim,
-            num_layers=1,
-            bidirectional=True,
-            batch_first=True,
-            dropout=0.2,
         )
 
         self.lstm_norm = nn.LayerNorm(self.bert.config.hidden_size)
@@ -88,7 +68,6 @@ class BertWithMLPForNER(nn.Module):
         logits = self.mlp(sequence_output)
 
         outputs = self.bert(input_ids, attention_mask=attention_mask)
-        sequence_output = outputs.hidden_states[-1]
 
         loss = None
         if labels is not None:
