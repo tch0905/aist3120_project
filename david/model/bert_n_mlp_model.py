@@ -23,6 +23,7 @@ from dice_loss import DiceLoss
 from selfAdjDiceLoss import SelfAdjDiceLoss
 
 from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
+from utils.data_augment import mask_tokens_in_dataset
 
 # Step 1: Load Dataset and Labels
 dataset = load_from_disk("../../conll2003_local")
@@ -356,7 +357,7 @@ training_args = TrainingArguments(
     output_dir="../../../autodl-fs/ner_results",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=10,
+    num_train_epochs=1,
     learning_rate=2e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -375,17 +376,48 @@ training_args = TrainingArguments(
     # label_smoothing_factor=0.1,
 )
 
+# trainer = Trainer(
+#     model=model,
+#     args=training_args,
+#     train_dataset=tokenized_datasets_conll["train"],
+#     eval_dataset=tokenized_datasets_conll["validation"],
+#     data_collator=data_collator,
+#     tokenizer=tokenizer,
+#     compute_metrics=compute_metrics,
+# )
+
+# trainer.train()
+
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_conll["train"],
+    train_dataset=None,  # Will be set in loop
     eval_dataset=tokenized_datasets_conll["validation"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
 )
 
-trainer.train()
+# Training loop with progressive masking
+for epoch in range(5):
+    print(f"\n=== Training Iteration {epoch+1} ===")
+    
+    # Set the dataset for this iteration with increasing masking
+    # current_mask_prob = 0.15 * (epoch + 1) / 3  # Ranges from 5% to 15%
+    
+    if epoch > 0:
+        # Apply masking only after first epoch
+        trainer.train_dataset = mask_tokens_in_dataset(
+            tokenized_datasets_conll["train"].shuffle(),
+            mask_prob=0.1
+        )
+    else:
+        # First epoch uses original data
+        trainer.train_dataset = tokenized_datasets_conll["train"]
+    
+    trainer.train()
+    
+    # Evaluation happens automatically per TrainingArguments
 
 # Then train on mixed dataset
 # mixed_train = concatenate_datasets([
