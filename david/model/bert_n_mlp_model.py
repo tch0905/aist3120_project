@@ -357,7 +357,7 @@ training_args = TrainingArguments(
     output_dir="../../../autodl-fs/ner_results",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=1,
+    num_train_epochs=10,
     learning_rate=2e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -388,37 +388,40 @@ training_args = TrainingArguments(
 
 # trainer.train()
 
+# tokenized_datasets_conll_masked = mask_tokens_in_dataset(
+#     tokenized_datasets_conll["train"].shuffle(),
+#     tokenizer=tokenizer,
+#     mask_prob=0.1
+# )
+
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=None,  # Will be set in loop
+    train_dataset=tokenized_datasets_conll["train"].shuffle(),
     eval_dataset=tokenized_datasets_conll["validation"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
 )
 
-# Training loop with progressive masking
-for epoch in range(5):
-    print(f"\n=== Training Iteration {epoch+1} ===")
+# for epoch in range(5):
+#     print(f"\n=== Training Iteration {epoch+1} ===")
     
-    # Set the dataset for this iteration with increasing masking
-    # current_mask_prob = 0.15 * (epoch + 1) / 3  # Ranges from 5% to 15%
+#     # Set the dataset for this iteration with increasing masking
+#     # current_mask_prob = 0.15 * (epoch + 1) / 3  # Ranges from 5% to 15%
     
-    if epoch > 0:
-        # Apply masking only after first epoch
-        trainer.train_dataset = mask_tokens_in_dataset(
-            tokenized_datasets_conll["train"].shuffle(),
-            tokenizer=tokenizer,
-            mask_prob=0.1
-        )
-    else:
-        # First epoch uses original data
-        trainer.train_dataset = tokenized_datasets_conll["train"]
+#     if epoch > 0:
+#         # Apply masking only after first epoch
+#         trainer.train_dataset = mask_tokens_in_dataset(
+#             tokenized_datasets_conll["train"].shuffle(),
+#             tokenizer=tokenizer,
+#             mask_prob=0.1
+#         )
+#     else:
+#         # First epoch uses original data
+#         trainer.train_dataset = tokenized_datasets_conll["train"]
     
-    trainer.train()
-    
-    # Evaluation happens automatically per TrainingArguments
+#     trainer.train()
 
 # Then train on mixed dataset
 # mixed_train = concatenate_datasets([
@@ -430,10 +433,10 @@ for epoch in range(5):
 # trainer.learning_rate = 2e-5  # reduced learning rate
 # trainer.train()
 
-print("=== Now training on conll ===")
-trainer.train_dataset = tokenized_datasets_conll["train"]
-trainer.learning_rate = 2e-5
-trainer.train()
+# print("=== Now training on conll ===")
+# trainer.train_dataset = tokenized_datasets_conll["train"]
+# trainer.learning_rate = 2e-5
+# trainer.train()
 
 # Step 7: Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
