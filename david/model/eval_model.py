@@ -15,7 +15,11 @@ parser.add_argument("--checkpoint", type=str, required=True, help="Path to the s
 args = parser.parse_args()
 
 # Load tokenizer
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+tokenizer = AutoTokenizer.from_pretrained(
+    "../../roberta-base-local",
+    add_prefix_space=True
+)
+
 
 # Load dataset
 dataset = load_from_disk("../../conll2003_local")
