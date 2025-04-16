@@ -11,7 +11,7 @@ from utils import augment_batch_with_random_concat
 
 
 BATCH_SIZE = 128
-EPOCH_SIZE = 5
+EPOCH_SIZE = 10
 
 num_classes = 9
 learning_rate = 2e-5
