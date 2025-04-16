@@ -17,7 +17,7 @@ num_classes = 9
 learning_rate = 2e-5
 epoch_size = EPOCH_SIZE
 
-model = BertWithMLPForNER(model_name="", num_labels=9)
+model = BertWithMLPForNER(num_labels=9)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
