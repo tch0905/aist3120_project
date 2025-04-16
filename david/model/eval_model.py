@@ -2,7 +2,7 @@ import argparse
 import torch
 from transformers import AutoTokenizer, TrainingArguments, Trainer
 from datasets import load_from_disk
-from bert_n_mlp_model import BertWithMLPForNER  # Replace with your actual model file
+from model import BertWithMLPForNER  # Replace with your actual model file
 from utils.save_best_model import save_test_results_and_hparams
 from seqeval.metrics import classification_report
 import numpy as np
