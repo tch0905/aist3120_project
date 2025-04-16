@@ -55,7 +55,7 @@ model.load_state_dict(torch.load(args.model_path))
 
 # Initialize Trainer
 trainer = Trainer(model=model)
-
+print(f"Best Validation F1 Score: {trainer.state.best_metric:.6f}")
 # Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
 print(results)
