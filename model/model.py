@@ -181,7 +181,6 @@ for epoch in range(epoch_size):
 
         optimizer.zero_grad()
         outputs = model(input_ids, attention_mask)
-
         # Compute loss with class weights
         loss = criterion(outputs.view(-1, num_classes), labels.view(-1))
         loss.backward()
