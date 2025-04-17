@@ -62,33 +62,36 @@ class BertWithMLPForNER(nn.Module):
 
     def forward(self, input_ids, attention_mask, labels=None):
         outputs = self.bert(input_ids, attention_mask=attention_mask)
-        sequence_output = outputs.hidden_states[-1]  # Last hidden state
+        sequence_output = outputs.hidden_states[-1]  # Last hidden state from BERT
 
-        # Pass through MLP
+        # MLP Head for prediction
         logits = self.mlp(sequence_output)
-
-        outputs = self.bert(input_ids, attention_mask=attention_mask)
 
         loss = None
         if labels is not None:
-            if self.use_crf:
-                # CRF requires mask for padding tokens
+            if self.loss_type in ['crf'] and self.use_crf:
+                # CRF expects a mask and labels with no -100
                 mask = (input_ids != tokenizer.pad_token_id).bool()
 
-                # Convert -100 to 0 for CRF (it will be masked anyway)
                 labels_crf = labels.clone()
-                labels_crf[labels == -100] = 0
+                labels_crf[labels == -100] = 0  # Replace -100 with dummy label (ignored by mask)
 
-                # CRF loss calculation
+                # Compute CRF loss (negative log-likelihood)
                 loss = -self.crf(logits, labels_crf, mask=mask, reduction='mean')
-            elif self.loss_type == 'self_adj_dice':
+
+            elif self.loss_type in ['self_adj_dice', 'focal', 'dice']:
+                # Flatten logits and labels, remove ignored indices
                 active_logits = logits.view(-1, self.num_labels)
                 active_labels = labels.view(-1)
                 valid_indices = active_labels != -100
                 active_logits = active_logits[valid_indices]
                 active_labels = active_labels[valid_indices]
+
+                # Compute custom loss
                 loss = self.loss_fn(active_logits, active_labels)
+
             else:
+                # Default: CrossEntropyLoss (unweighted or weighted)
                 loss = self.loss_fn(logits.view(-1, self.num_labels), labels.view(-1))
 
         return {"loss": loss, "logits": logits}
