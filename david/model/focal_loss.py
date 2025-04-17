@@ -11,7 +11,7 @@ class FocalLoss(nn.Module):
         self.reduction = reduction
 
     def forward(self, inputs, targets):
-        alpha = self.alpha.to(input.device) if self.weight is not None else None
+        alpha = self.alpha.to(inputs.device) if self.alpha is not None else None
 
         ce_loss = F.cross_entropy(
             inputs, 
