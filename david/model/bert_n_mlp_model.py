@@ -15,7 +15,7 @@ import torch.nn.functional as F
 from datasets import load_dataset, load_from_disk, concatenate_datasets
 from seqeval.metrics import classification_report
 from model import BertWithMLPForNER
-
+from safetensors.torch import load_file
 from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
 
 # Step 1: Load Dataset and Labels
@@ -254,7 +254,7 @@ training_args = TrainingArguments(
     output_dir="./",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=20,
+    num_train_epochs=10,
     learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -285,6 +285,7 @@ trainer = Trainer(
 )
 trainer.train()
 
+
 # Then train on mixed dataset
 # mixed_train = concatenate_datasets([
 #     tokenized_datasets_wikiann["train"].select(range(10000)),  # subset of WikiANN
@@ -299,7 +300,14 @@ results = trainer.evaluate(tokenized_datasets_conll["test"])
 print("Test Result:")
 print(results)
 
+trainer.save_model("./best_model")
 print("=== Now training on conll ===")
+trainer.num_train_epochs = 25
+
+state_dict = load_file(f"./best_model/model.safetensors")
+model.load_state_dict(state_dict)
+
+# Update the trainer with the new model for the next dataset
 trainer.train_dataset = tokenized_datasets_conll["train"]
 trainer.eval_dataset = tokenized_datasets_conll["test"]
 trainer.learning_rate = 2e-5
