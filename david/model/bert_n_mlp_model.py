@@ -280,7 +280,7 @@ trainer = Trainer(
     train_dataset=tokenized_datasets_wikiann["train"],
     eval_dataset=tokenized_datasets_conll["test"],
     tokenizer=tokenizer,
-    data_collator=data_collator,
+    # data_collator=data_collator,
     compute_metrics=compute_metrics
 )
 trainer.train()
