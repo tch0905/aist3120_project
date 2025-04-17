@@ -129,7 +129,7 @@ class AugmentingDataCollator:
 # Original
 model = BertWithMLPForNER(
     num_labels, 
-    loss_type='dice',
+    loss_type='focal',
 )
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
