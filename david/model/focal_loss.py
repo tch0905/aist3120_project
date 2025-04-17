@@ -3,8 +3,10 @@ from torch import nn
 import torch.nn.functional as F
 
 class FocalLoss(nn.Module):
-    def __init__(self, alpha=0.9, gamma=1.0, ignore_index=-100, reduction='sum'):
+    def __init__(self, alpha=None, gamma=1.0, ignore_index=-100, reduction='sum'):
         super().__init__()
+        if alpha is None:
+            alpha = [0.9] * 9
         self.alpha = torch.tensor(alpha)  # Weighting factor per class (can be None)
         self.gamma = gamma  # Focusing parameter (higher γ = more focus on hard examples)
         self.ignore_index = ignore_index
