@@ -301,7 +301,7 @@ print(results)
 
 print("=== Now training on conll ===")
 trainer.train_dataset = tokenized_datasets_conll["train"]
-trainer.eval_dataset = tokenized_datasets_conll["validation"]
+trainer.eval_dataset = tokenized_datasets_conll["test"]
 trainer.learning_rate = 2e-5
 trainer.train()
 
