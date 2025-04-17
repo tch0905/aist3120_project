@@ -254,7 +254,7 @@ training_args = TrainingArguments(
     output_dir="./",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=8,
+    num_train_epochs=20,
     learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -277,7 +277,7 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_wikiann["train"],
+    train_dataset=tokenized_datasets_conll["train"],
     eval_dataset=tokenized_datasets_conll["test"],
     tokenizer=tokenizer,
     # data_collator=data_collator,
@@ -296,34 +296,7 @@ trainer.train()
 # trainer.learning_rate = 2e-5  # reduced learning rate
 # trainer.train()
 
-results = trainer.evaluate(tokenized_datasets_conll["test"])
-print("Test Result:")
-print(results)
 
-trainer.save_model("./best_model")
-print("=== Now training on conll ===")
-training_args.num_train_epochs = 15  # Update to 25 epochs for CoNLL
-
-# Create a new trainer for CoNLL
-trainer = Trainer(
-    model=model,
-    args=training_args,
-    train_dataset=tokenized_datasets_conll["train"],  # Use CoNLL training dataset
-    eval_dataset=tokenized_datasets_conll["test"],
-    tokenizer=tokenizer,
-    data_collator=data_collator,
-    compute_metrics=compute_metrics
-)
-
-
-state_dict = load_file(f"./best_model/model.safetensors")
-model.load_state_dict(state_dict)
-
-# Update the trainer with the new model for the next dataset
-trainer.train_dataset = tokenized_datasets_conll["train"]
-trainer.eval_dataset = tokenized_datasets_conll["test"]
-trainer.learning_rate = 2e-5
-trainer.train()
 
 # Step 7: Evaluate
 results = trainer.evaluate(tokenized_datasets_conll["test"])
