@@ -6,7 +6,7 @@ class FocalLoss(nn.Module):
     def __init__(self, alpha=None, gamma=5.0, ignore_index=-100, reduction='sum'):
         super().__init__()
         if alpha is None:
-            alpha = [1, 1, 1, 1, 1, 1, 1, 1, 1]
+            alpha = [1.0, 1, 1, 1, 1, 1, 1, 1, 1]
         self.alpha = torch.tensor(alpha)  # Weighting factor per class (can be None)
         self.gamma = gamma  # Focusing parameter (higher γ = more focus on hard examples)
         self.ignore_index = ignore_index
