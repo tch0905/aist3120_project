@@ -302,7 +302,7 @@ print(results)
 
 trainer.save_model("./best_model")
 print("=== Now training on conll ===")
-training_args.num_train_epochs = 25  # Update to 25 epochs for CoNLL
+training_args.num_train_epochs = 15  # Update to 25 epochs for CoNLL
 
 # Create a new trainer for CoNLL
 trainer = Trainer(
