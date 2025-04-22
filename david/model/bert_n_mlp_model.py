@@ -252,8 +252,8 @@ def compute_metrics(p):
 # Step 6: Training
 training_args = TrainingArguments(
     output_dir="./",
-    per_device_train_batch_size=64+32,
-    per_device_eval_batch_size=64+32,
+    per_device_train_batch_size=64+24,
+    per_device_eval_batch_size=64+24,
     num_train_epochs=20,
     learning_rate=5e-5,
     weight_decay=0.01,
