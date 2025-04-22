@@ -254,7 +254,7 @@ training_args = TrainingArguments(
     output_dir="./",
     per_device_train_batch_size=64+24,
     per_device_eval_batch_size=64+24,
-    num_train_epochs=20,
+    num_train_epochs=8,
     learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -292,7 +292,7 @@ print(results)
 
 trainer.save_model("./best_model")
 print("=== Now training on conll ===")
-training_args.num_train_epochs = 15  # Update to 25 epochs for CoNLL
+training_args.num_train_epochs = 25  # Update to 25 epochs for CoNLL
 
 # Create a new trainer for CoNLL
 trainer = Trainer(
