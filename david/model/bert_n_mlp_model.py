@@ -129,7 +129,7 @@ class AugmentingDataCollator:
 # Original
 model = BertWithMLPForNER(
     num_labels, 
-    loss_type='dice',
+    loss_type='focal',
 )
 # Step 3: Tokenize and Align Labels
 def tokenize_and_align_labels(examples):
@@ -277,12 +277,42 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_conll["train"],
+    train_dataset=tokenized_datasets_wikiann["train"],
     eval_dataset=tokenized_datasets_conll["test"],
     tokenizer=tokenizer,
     # data_collator=data_collator,
     compute_metrics=compute_metrics
 )
+trainer.train()
+
+
+results = trainer.evaluate(tokenized_datasets_conll["test"])
+print("Test Result:")
+print(results)
+
+trainer.save_model("./best_model")
+print("=== Now training on conll ===")
+training_args.num_train_epochs = 15  # Update to 25 epochs for CoNLL
+
+# Create a new trainer for CoNLL
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_datasets_conll["train"],  # Use CoNLL training dataset
+    eval_dataset=tokenized_datasets_conll["test"],
+    tokenizer=tokenizer,
+    data_collator=data_collator,
+    compute_metrics=compute_metrics
+)
+
+
+state_dict = load_file(f"./best_model/model.safetensors")
+model.load_state_dict(state_dict)
+
+# Update the trainer with the new model for the next dataset
+trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.eval_dataset = tokenized_datasets_conll["test"]
+trainer.learning_rate = 2e-5
 trainer.train()
 
 
