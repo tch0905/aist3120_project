@@ -1,10 +1,10 @@
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 # Define the model name
-model_name = "FacebookAI/roberta-base"
+model_name = "FacebookAI/roberta-large"
 
 # Define the local directory where you want to save the model
-save_directory = "../../roberta-base-local"
+save_directory = "../../roberta-large-local"
 
 # Load the tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(model_name)

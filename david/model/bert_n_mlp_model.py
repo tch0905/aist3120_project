@@ -35,10 +35,10 @@ def validate_wikiann_tags(example):
 wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 
 # Step 2: Load Tokenizer and Model with Custom MLP Head
-model_name = "bert-base-cased"
+# model_name = "bert-base-cased"
 # tokenizer = AutoTokenizer.from_pretrained("../../bert-base-cased-local")
 tokenizer = AutoTokenizer.from_pretrained(
-    "../../roberta-base-local",
+    "../../roberta-large-local",
     add_prefix_space=True
 )
 
@@ -254,7 +254,7 @@ training_args = TrainingArguments(
     output_dir="./",
     per_device_train_batch_size=128,
     per_device_eval_batch_size=128,
-    num_train_epochs=8,
+    num_train_epochs=20,
     learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -277,7 +277,7 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_wikiann["train"],
+    train_dataset=tokenized_datasets_conll["train"],
     eval_dataset=tokenized_datasets_conll["test"],
     tokenizer=tokenizer,
     # data_collator=data_collator,

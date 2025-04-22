@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(
-    "../../roberta-base-local",
+    "../../roberta-large-local",
     add_prefix_space=True
 )
 
