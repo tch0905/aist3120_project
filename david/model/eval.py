@@ -34,7 +34,7 @@ model = BertWithMLPForNER(
     num_labels,
     loss_type='focal',
 )
-state_dict = load_file(f"./checkpoint-1768/model.safetensors")
+state_dict = load_file(f"./checkpoint-1989/model.safetensors")
 model.load_state_dict(state_dict)
 model.eval()
 
