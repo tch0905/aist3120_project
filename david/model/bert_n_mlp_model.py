@@ -18,7 +18,7 @@ from model import BertWithMLPForNER
 from tokenize_and_align_labels import tokenize_and_align_labels, tokenizer
 from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
 
-BATCH_SIZE = 4
+BATCH_SIZE = 64 + 24
 
 
 # Verify WikiANN tags (should only contain 0-6)
