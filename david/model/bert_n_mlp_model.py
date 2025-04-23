@@ -67,11 +67,30 @@ def preprocess_dataset(dataset):
 
     return new_data
 
+def preprocess_dataset_test(dataset):
+    new_data = {"tokens": [], "ner_tags": [], "id": [], "pos_tags": [], "chunk_tags": []}
+    id = 0
+    for example in dataset:
+        tokens, ner_tags = example["tokens"], example["ner_tags"]
+        pos_tags, chunk_tags = example["pos_tags"], example["chunk_tags"]
+
+        new_data["id"].append(id)
+        id += 1
+        modified_tokens = tokens.copy()
+        modified_tokens[0] = modified_tokens[0]
+        new_data["tokens"].append(modified_tokens)
+        new_data["pos_tags"].append(pos_tags)
+        new_data["chunk_tags"].append(chunk_tags)
+        new_data["ner_tags"].append(ner_tags)
+
+    return new_data
 
 processed_data = preprocess_dataset(dataset["train"])
 processed_dataset = datasets.Dataset.from_dict(processed_data)
 tokenized_datasets_conll = processed_dataset.map(tokenize_and_align_labels, batched=True)
-tokenized_datasets_conll_test = dataset.map(tokenize_and_align_labels, batched=True)
+processed_data_test = preprocess_dataset_test(dataset["test"])
+processed_dataset_test = datasets.Dataset.from_dict(processed_data_test)
+tokenized_datasets_conll_test = processed_dataset_test.map(tokenize_and_align_labels, batched=True)
 # if wikinn need another ffucnito
 # processed_data_wikiann = preprocess_dataset(wikiann_dataset["train"])
 # processed_dataset_wikiann = datasets.Dataset.from_dict(processed_data_wikiann)
@@ -108,7 +127,7 @@ trainer = Trainer(
     model=model,
     args=training_args,
     train_dataset=tokenized_datasets_conll,
-    eval_dataset=tokenized_datasets_conll_test["test"],
+    eval_dataset=tokenized_datasets_conll_test,
     tokenizer=tokenizer,
     data_collator=data_collator,
     compute_metrics=compute_metrics
@@ -116,7 +135,7 @@ trainer = Trainer(
 trainer.train()
 
 
-# results = trainer.evaluate(tokenized_datasets_conll_test["test"])
+# results = trainer.evaluate(tokenized_datasets_conll_test)
 # print("Test Result:")
 # print(results)
 #
@@ -129,7 +148,7 @@ trainer.train()
 #     model=model,
 #     args=training_args,
 #     train_dataset=tokenized_datasets_conll,  # Use CoNLL training dataset
-#     eval_dataset=tokenized_datasets_conll_test["test"],
+#     eval_dataset=tokenized_datasets_conll_test,
 #     tokenizer=tokenizer,
 #     data_collator=data_collator,
 #     compute_metrics=compute_metrics
@@ -141,14 +160,14 @@ trainer.train()
 
 # Update the trainer with the new model for the next dataset
 # trainer.train_dataset = tokenized_datasets_conll
-# trainer.eval_dataset = tokenized_datasets_conll_test["test"]
+# trainer.eval_dataset = tokenized_datasets_conll_test
 # trainer.learning_rate = 2e-5
 # trainer.train()
 
 
 
 # Step 7: Evaluate
-results = trainer.evaluate(tokenized_datasets_conll_test["test"])
+results = trainer.evaluate(tokenized_datasets_conll_test)
 print("Test Result:")
 print(results)
 
@@ -158,7 +177,7 @@ print(f"Best Validation F1 Score: {trainer.state.best_metric:.6f}")
 
 # Evaluate the best model on the test set
 print("\n=== Evaluation of Best Model on Test Set ===")
-best_model_results = trainer.evaluate(tokenized_datasets_conll_test["test"])
+best_model_results = trainer.evaluate(tokenized_datasets_conll_test)
 print("Test Set Results for Best Model:")
 for metric, value in best_model_results.items():
     if isinstance(value, float):

@@ -17,7 +17,7 @@ def preprocess_dataset_test(dataset):
         new_data["id"].append(id)
         id += 1
         modified_tokens = tokens.copy()
-        modified_tokens[0] =  modified_tokens[0]
+        modified_tokens[0] = modified_tokens[0]
         new_data["tokens"].append(modified_tokens)
         new_data["pos_tags"].append(pos_tags)
         new_data["chunk_tags"].append(chunk_tags)
