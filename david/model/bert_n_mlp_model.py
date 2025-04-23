@@ -55,7 +55,7 @@ def preprocess_dataset(dataset):
         new_data["ner_tags"].append(ner_tags)
 
         # Duplicate if first tag is not 0
-        if ner_tags[0] != 0:
+        if ner_tags[0] not in [0, 7, 8]:
             new_data["id"].append(id)
             id += 1
             modified_tokens = tokens.copy()
