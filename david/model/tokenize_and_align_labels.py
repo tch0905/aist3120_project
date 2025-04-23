@@ -1,16 +1,28 @@
-from transformers import RobertaTokenizer, RobertaTokenizerFast
+from transformers import RobertaTokenizerFast
 
-tokenizer = RobertaTokenizerFast.from_pretrained("../../roberta-large-local")
+tokenizer = RobertaTokenizerFast.from_pretrained("../../roberta-large-local", add_prefix_space=True )
+tokenizer_front = RobertaTokenizerFast.from_pretrained("../../roberta-large-local")
+
+
 def tokenize_and_align_labels(examples):
-    text = [" ".join(sentence) for sentence in examples["tokens"]]
-
     tokenized_inputs = tokenizer(
-        text,
+        examples["tokens"],
         truncation=True,
-        is_split_into_words=False,  # Important change
+        is_split_into_words=True,  # Important change
         padding="max_length",
         max_length=128,
     )
+
+    # Handle cases where first token starts with space
+    for i, sentence in enumerate(examples["tokens"]):
+        if len(sentence) > 0 and not sentence[0].startswith(' '):
+            # Tokenize the first word separately
+            first_word_encoding = tokenizer_front(sentence[0], add_special_tokens=False)
+            if len(first_word_encoding['input_ids']) > 0:
+                # Replace the first token in the input_ids
+                tokenized_inputs['input_ids'][i][1] = first_word_encoding['input_ids'][0]  # Skip [CLS] token
+                # Similarly update attention_mask if needed
+                tokenized_inputs['attention_mask'][i][1] = 1
 
     labels = []
     for i, label in enumerate(examples["ner_tags"]):
@@ -26,5 +38,6 @@ def tokenize_and_align_labels(examples):
                 label_ids.append(-100)  # Subword (optional: use label[word_idx])
             previous_word_idx = word_idx
         labels.append(label_ids)
+
     tokenized_inputs["labels"] = labels
     return tokenized_inputs
