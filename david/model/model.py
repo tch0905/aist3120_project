@@ -23,14 +23,11 @@ tokenizer = AutoTokenizer.from_pretrained(
 class BertWithMLPForNER(nn.Module):
     def __init__(self, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
         super().__init__()
-        self.lstm_hidden_dim = 384
         self.bert = AutoModelForTokenClassification.from_pretrained(
             "../../roberta-large-local",
             num_labels=num_labels,
             output_hidden_states=True,
         )
-
-        self.lstm_norm = nn.LayerNorm(self.bert.config.hidden_size)
 
         # Custom MLP Head
         self.mlp = nn.Sequential(
