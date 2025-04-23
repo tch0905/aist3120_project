@@ -1,13 +1,15 @@
-from transformers import RobertaTokenizer
+from transformers import RobertaTokenizer, RobertaTokenizerFast
 
-tokenizer = RobertaTokenizer.from_pretrained("../../roberta-large-local")
+tokenizer = RobertaTokenizerFast.from_pretrained("../../roberta-large-local")
 def tokenize_and_align_labels(examples):
+    text = [" ".join(sentence) for sentence in examples["tokens"]]
+
     tokenized_inputs = tokenizer(
-        examples["tokens"],
+        text,
         truncation=True,
-        is_split_into_words=True,
+        is_split_into_words=False,  # Important change
         padding="max_length",
-        max_length=512,
+        max_length=128,
     )
 
     labels = []
