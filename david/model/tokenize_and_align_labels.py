@@ -1,17 +1,13 @@
-from transformers import AutoTokenizer
+from transformers import RobertaTokenizer
 
-tokenizer = AutoTokenizer.from_pretrained(
-    "../../roberta-large-local",
-    add_prefix_space=True
-)
-
+tokenizer = RobertaTokenizer.from_pretrained("../../roberta-large-local")
 def tokenize_and_align_labels(examples):
     tokenized_inputs = tokenizer(
         examples["tokens"],
         truncation=True,
         is_split_into_words=True,
         padding="max_length",
-        max_length=128,
+        max_length=512,
     )
 
     labels = []
