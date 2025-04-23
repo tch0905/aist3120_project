@@ -128,7 +128,7 @@ training_args.num_train_epochs = 25  # Update to 25 epochs for CoNLL
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_datasets_conll["train"],  # Use CoNLL training dataset
+    train_dataset=tokenized_datasets_conll,  # Use CoNLL training dataset
     eval_dataset=tokenized_datasets_conll_test["test"],
     tokenizer=tokenizer,
     data_collator=data_collator,
@@ -140,7 +140,7 @@ state_dict = load_file(f"./best_model/model.safetensors")
 model.load_state_dict(state_dict)
 
 # Update the trainer with the new model for the next dataset
-trainer.train_dataset = tokenized_datasets_conll["train"]
+trainer.train_dataset = tokenized_datasets_conll
 trainer.eval_dataset = tokenized_datasets_conll_test["test"]
 trainer.learning_rate = 2e-5
 trainer.train()
