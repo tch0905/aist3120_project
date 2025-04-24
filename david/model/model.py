@@ -31,10 +31,9 @@ class BertWithMLPForNER(nn.Module):
 
         # Custom MLP Head
         self.mlp = nn.Sequential(
-            nn.Linear(self.bert.config.hidden_size, hidden_dim),
             nn.ReLU(),
-            # nn.Dropout(0.2),
-            nn.Linear(hidden_dim, num_labels),
+            nn.Dropout(0.2),
+            nn.Linear(self.bert.config.hidden_size, num_labels),
         )
 
         # CRF Layer
