@@ -1,22 +1,10 @@
-import torch
-import numpy as np
 from torch import nn
-from transformers import (
-    AutoModelForTokenClassification,
-    AutoTokenizer,
-    DataCollatorForTokenClassification,
-    Trainer,
-    TrainingArguments,
-)
+
 import torch.nn.functional as F
-from datasets import load_dataset, load_from_disk
-from seqeval.metrics import classification_report
-from torch import Tensor
-from typing import Optional
 
 
 class DiceLoss(nn.Module):
-    def __init__(self, smooth=1e-5, ignore_index=-100, reduction='mean'):
+    def __init__(self, smooth=1e-4, ignore_index=-100, reduction='mean'):
         super(DiceLoss, self).__init__()
         self.smooth = smooth
         self.ignore_index = ignore_index
