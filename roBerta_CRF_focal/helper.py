@@ -1,3 +1,4 @@
+# Down load the model and tokenizer from Hugging Face in the local from AutoDL
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 # Define the model name

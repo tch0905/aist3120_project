@@ -18,7 +18,8 @@ from model import BertWithMLPForNER
 from tokenize_and_align_labels import tokenize_and_align_labels, tokenizer
 from utils.save_best_model import save_model_params_and_f1, save_model_and_hparams, save_test_results_and_hparams
 
-BATCH_SIZE = 64 + 24
+# BATCH_SIZE = 64 + 16 + 8 # for 4090D
+BATCH_SIZE = 4
 
 
 # Verify WikiANN tags (should only contain 0-6)
@@ -27,7 +28,7 @@ def validate_wikiann_tags(example):
         assert tag in {0, 1, 2, 3, 4, 5, 6}, f"Invalid WikiANN tag: {tag}"
     return example
 
-wikiann_dataset = load_from_disk("../../wikiann_local")
+wikiann_dataset = load_from_disk("../wikiann_local")
 wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 
 
@@ -54,6 +55,7 @@ def preprocess_dataset(dataset):
         new_data["chunk_tags"].append(chunk_tags)
         new_data["ner_tags"].append(ner_tags)
 
+        # Data augmentation
         # # Duplicate the data if first tag is not 0 and misc
         # if ner_tags[0] not in [0, 7, 8]:
         #     new_data["id"].append(id)
@@ -91,9 +93,6 @@ tokenized_datasets_conll = processed_dataset.map(tokenize_and_align_labels, batc
 processed_data_test = preprocess_dataset_test(dataset["test"])
 processed_dataset_test = datasets.Dataset.from_dict(processed_data_test)
 tokenized_datasets_conll_test = processed_dataset_test.map(tokenize_and_align_labels, batched=True)
-# if wikinn need another ffucnito
-# processed_data_wikiann = preprocess_dataset(wikiann_dataset["train"])
-# processed_dataset_wikiann = datasets.Dataset.from_dict(processed_data_wikiann)
 tokenized_datasets_wikiann = wikiann_dataset.map(tokenize_and_align_labels, batched=True)
 
 data_collator = DataCollatorForTokenClassification(tokenizer)
@@ -103,7 +102,7 @@ training_args = TrainingArguments(
     output_dir="./",
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=BATCH_SIZE,
-    num_train_epochs=5,
+    num_train_epochs=10,
     learning_rate=5e-5,
     weight_decay=0.01,
     evaluation_strategy="epoch",
@@ -141,7 +140,7 @@ print(results)
 
 trainer.save_model("./best_model")
 # print("=== Now training on conll ===")
-training_args.num_train_epochs = 25  # Update to 25 epochs for CoNLL
+training_args.num_train_epochs = 20
 #
 # # Create a new trainer for CoNLL
 trainer = Trainer(

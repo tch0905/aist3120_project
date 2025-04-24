@@ -5,15 +5,6 @@ from dataset import label_names
 def compute_metrics(p):
     predictions, labels = p.predictions, p.label_ids
 
-    # ## Original
-    # predictions = np.argmax(predictions, axis=2)
-
-    # # Remove ignored index (-100)
-    # true_labels = [[label_names[l] for l in label if l != -100] for label in labels]
-    # true_predictions = [
-    #     [label_names[p] for (p, l) in zip(prediction, label) if l != -100]
-    #     for prediction, label in zip(predictions, labels)
-    # ]
 
     # Handle CRF case where predictions might come as lists of lists
     if isinstance(predictions, list):

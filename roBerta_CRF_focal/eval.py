@@ -41,7 +41,7 @@ model.eval()
 data_collator = DataCollatorForTokenClassification(tokenizer)
 
 training_args = TrainingArguments(
-    output_dir="./",
+    output_dir="../david/model/",
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=BATCH_SIZE,
     num_train_epochs=0,

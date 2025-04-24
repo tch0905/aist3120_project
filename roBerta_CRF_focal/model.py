@@ -16,7 +16,7 @@ from selfAdjDiceLoss import SelfAdjDiceLoss
 
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "../../roberta-large-local",
+    "../roberta-large-local",
     add_prefix_space=True
 )
 
@@ -24,7 +24,7 @@ class BertWithMLPForNER(nn.Module):
     def __init__(self, num_labels, hidden_dim=256, loss_type='focal', loss_kwargs=None):
         super().__init__()
         self.bert = AutoModelForTokenClassification.from_pretrained(
-            "../../roberta-large-local",
+            "../roberta-large-local",
             num_labels=num_labels,
             output_hidden_states=True,
         )

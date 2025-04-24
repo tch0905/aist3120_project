@@ -1,5 +1,4 @@
 import argparse
-import torch
 from datasets import load_from_disk
 from transformers import Trainer, TrainingArguments, DataCollatorForTokenClassification
 from safetensors.torch import load_file
@@ -12,8 +11,8 @@ from model import BertWithMLPForNER  # Ensure this is your custom model class
 
 # Load your tokenizer and datasets (assumed preloaded)
 # Step 1: Load Dataset and Labels
-dataset = load_from_disk("../../conll2003_local")
-wikiann_dataset = load_from_disk("../../wikiann_local")
+dataset = load_from_disk("../conll2003_local")
+wikiann_dataset = load_from_disk("../wikiann_local")
 
 # CoNLL-2003 Label Names
 label_names = dataset["train"].features["ner_tags"].feature.names

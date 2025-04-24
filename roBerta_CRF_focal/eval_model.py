@@ -16,13 +16,13 @@ args = parser.parse_args()
 
 # Load tokenizer
 tokenizer = AutoTokenizer.from_pretrained(
-    "../../roberta-large-local",
+    "",
     add_prefix_space=True
 )
 
 
 # Load dataset
-dataset = load_from_disk("../../conll2003_local")
+dataset = load_from_disk("../conll2003_local")
 label_names = dataset["train"].features["ner_tags"].feature.names
 num_labels = len(label_names)
 
@@ -109,7 +109,7 @@ def compute_metrics(p):
 
 # Create training args and trainer (for evaluation only)
 training_args = TrainingArguments(
-    output_dir="./",
+    output_dir="../david/model/",
     per_device_eval_batch_size=128,
     report_to="none",
     logging_dir="./logs"

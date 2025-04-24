@@ -1,7 +1,7 @@
 from transformers import RobertaTokenizerFast
 
-tokenizer = RobertaTokenizerFast.from_pretrained("../../roberta-large-local", add_prefix_space=True )
-tokenizer_front = RobertaTokenizerFast.from_pretrained("../../roberta-large-local")
+tokenizer = RobertaTokenizerFast.from_pretrained("../roberta-large-local", add_prefix_space=True)
+tokenizer_front = RobertaTokenizerFast.from_pretrained("../roberta-large-local")
 
 
 def tokenize_and_align_labels(examples):
@@ -12,8 +12,11 @@ def tokenize_and_align_labels(examples):
         padding="max_length",
         max_length=128,
     )
-
+    '''
     # Handle cases where first token starts with space
+    # This is Roberta originally token method and depends on your tokenizer's behavior
+    # adopted
+    '''
     # for i, sentence in enumerate(examples["tokens"]):
     #     if len(sentence) > 0 and not sentence[0].startswith(' '):
     #         # Tokenize the first word separately
