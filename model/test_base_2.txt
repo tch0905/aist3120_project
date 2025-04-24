@@ -1,0 +1,74 @@
+DatasetDict({
+    train: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 14041
+    })
+    validation: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3250
+    })
+    test: Dataset({
+        features: ['id', 'tokens', 'pos_tags', 'chunk_tags', 'ner_tags'],
+        num_rows: 3453
+    })
+})
+{'input_ids': [101, 7270, 22961, 1528, 1840, 1106, 21423, 1418, 2495, 12913, 119, 102, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'token_type_ids': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'attention_mask': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
+Class Weights: tensor([0.0020, 0.0511, 0.0744, 0.0533, 0.0910, 0.0472, 0.2913, 0.0980, 0.2918])
+Training in epoch_size: 5, batch_size: 4, learning_rate: 3e-05, device: cuda
+vocab_size=28996, embed_size=768, num_layers=12, heads=12, forward_expansion=8, dropout=0.1, max_len=512, num_classes=9
+Epoch 1, Loss: 0.7227
+Epoch 2, Loss: 0.4834
+Epoch 3, Loss: 0.3755
+Epoch 4, Loss: 0.3023
+Epoch 5, Loss: 0.2458
+Evaluation Report on Training Data:
+              precision    recall  f1-score   support
+
+           0     0.9887    0.9920    0.9904    205042
+           1     0.8758    0.7008    0.7786     12148
+           2     0.7651    0.8441    0.8026     10135
+           3     0.8202    0.7530    0.7852     13253
+           4     0.7158    0.7530    0.7339      6020
+           5     0.7011    0.9412    0.8036     13243
+           6     0.5631    0.6198    0.5901      1691
+           7     0.8932    0.5558    0.6852      5885
+           8     0.9217    0.4455    0.6007      1955
+
+    accuracy                         0.9379    269372
+   macro avg     0.8050    0.7339    0.7523    269372
+weighted avg     0.9415    0.9379    0.9368    269372
+
+Evaluation Report on Validation Data:
+              precision    recall  f1-score   support
+
+           0     0.9664    0.9794    0.9729     50662
+           1     0.7103    0.5090    0.5930      3169
+           2     0.6964    0.6571    0.6762      2779
+           3     0.6589    0.6245    0.6412      2679
+           4     0.4961    0.5373    0.5159      1059
+           5     0.6162    0.8528    0.7155      3588
+           6     0.4766    0.5499    0.5106       371
+           7     0.8379    0.4771    0.6080      1463
+           8     0.8824    0.3082    0.4569       584
+
+    accuracy                         0.8958     66354
+   macro avg     0.7046    0.6106    0.6322     66354
+weighted avg     0.8977    0.8958    0.8925     66354
+
+Evaluation Report on Test Data:
+              precision    recall  f1-score   support
+
+           0     0.9618    0.9684    0.9651     47232
+           1     0.6862    0.4692    0.5573      2875
+           2     0.6564    0.6428    0.6495      2511
+           3     0.6478    0.6283    0.6379      3487
+           4     0.4766    0.5880    0.5265      1284
+           5     0.5921    0.8162    0.6863      2938
+           6     0.5202    0.4358    0.4743       413
+           7     0.6980    0.4143    0.5200      1255
+           8     0.4044    0.2844    0.3339       320
+
+    accuracy                         0.8800     62315
+   macro avg     0.6271    0.5831    0.5945     62315
+weighted avg     0.8806    0.8800    0.8776     62315
+
