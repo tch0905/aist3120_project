@@ -5,7 +5,7 @@ from transformers import Trainer, TrainingArguments, DataCollatorForTokenClassif
 from safetensors.torch import load_file
 
 from compute_metrics import compute_metrics
-from david.model.utils.save_best_model import save_model_and_hparams, save_test_results_and_hparams
+from utils.save_best_model import save_model_and_hparams, save_test_results_and_hparams
 from tokenize_and_align_labels import tokenizer, tokenize_and_align_labels
 from model import BertWithMLPForNER  # Ensure this is your custom model class
 
