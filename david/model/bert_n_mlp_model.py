@@ -54,7 +54,7 @@ def preprocess_dataset(dataset):
         new_data["chunk_tags"].append(chunk_tags)
         new_data["ner_tags"].append(ner_tags)
 
-        # Duplicate if first tag is not 0
+        # Duplicate the data if first tag is not 0 and misc
         if ner_tags[0] not in [0, 7, 8]:
             new_data["id"].append(id)
             id += 1
@@ -139,7 +139,7 @@ results = trainer.evaluate(tokenized_datasets_conll_test)
 print("Test Result:")
 print(results)
 
-# trainer.save_model("./best_model")
+trainer.save_model("./best_model")
 # print("=== Now training on conll ===")
 training_args.num_train_epochs = 25  # Update to 25 epochs for CoNLL
 #
@@ -155,8 +155,8 @@ trainer = Trainer(
 )
 
 #
-# state_dict = load_file(f"./best_model/model.safetensors")
-# model.load_state_dict(state_dict)
+state_dict = load_file(f"./best_model/model.safetensors")
+model.load_state_dict(state_dict)
 
 # Update the trainer with the new model for the next dataset
 trainer.train_dataset = tokenized_datasets_conll

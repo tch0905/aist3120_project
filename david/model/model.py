@@ -33,7 +33,7 @@ class BertWithMLPForNER(nn.Module):
         self.mlp = nn.Sequential(
             nn.Linear(self.bert.config.hidden_size, hidden_dim),
             nn.ReLU(),
-            nn.Dropout(0.2),
+            # nn.Dropout(0.2),
             nn.Linear(hidden_dim, num_labels),
         )
 
