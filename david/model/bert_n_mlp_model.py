@@ -34,7 +34,7 @@ wikiann_dataset = wikiann_dataset.map(validate_wikiann_tags)
 # Original
 model = BertWithMLPForNER(
     num_labels, 
-    loss_type='focal',
+    loss_type='focal_new',
 )
 
 
