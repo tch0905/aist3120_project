@@ -1,0 +1,90 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "en",
+  "dataset_name": "wikiann",
+  "dataset_size": 9356257,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/wikiann@f0a3be6dc5564c0cc4150bb660144800a1f539d4/en/validation-00000-of-00001.parquet": {
+      "num_bytes": 747992,
+      "checksum": null
+    },
+    "hf://datasets/wikiann@f0a3be6dc5564c0cc4150bb660144800a1f539d4/en/test-00000-of-00001.parquet": {
+      "num_bytes": 747889,
+      "checksum": null
+    },
+    "hf://datasets/wikiann@f0a3be6dc5564c0cc4150bb660144800a1f539d4/en/train-00000-of-00001.parquet": {
+      "num_bytes": 1495103,
+      "checksum": null
+    }
+  },
+  "download_size": 2990984,
+  "features": {
+    "tokens": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "ner_tags": {
+      "feature": {
+        "names": [
+          "O",
+          "B-PER",
+          "I-PER",
+          "B-ORG",
+          "I-ORG",
+          "B-LOC",
+          "I-LOC"
+        ],
+        "_type": "ClassLabel"
+      },
+      "_type": "Sequence"
+    },
+    "langs": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "spans": {
+      "feature": {
+        "dtype": "string",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 12347241,
+  "splits": {
+    "validation": {
+      "name": "validation",
+      "num_bytes": 2346395,
+      "num_examples": 10000,
+      "dataset_name": "wikiann"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 2340260,
+      "num_examples": 10000,
+      "dataset_name": "wikiann"
+    },
+    "train": {
+      "name": "train",
+      "num_bytes": 4669602,
+      "num_examples": 20000,
+      "dataset_name": "wikiann"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
