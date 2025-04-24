@@ -1,10 +1,14 @@
 import argparse
 import torch
 from datasets import load_from_disk
-from transformers import Trainer, TrainingArguments
+from transformers import Trainer, TrainingArguments, DataCollatorForTokenClassification
 from safetensors.torch import load_file
+
+from compute_metrics import compute_metrics
+from david.model.utils.save_best_model import save_model_and_hparams, save_test_results_and_hparams
+from tokenize_and_align_labels import tokenizer, tokenize_and_align_labels
 from model import BertWithMLPForNER  # Ensure this is your custom model class
-from concat.save_best_model import save_model_and_hparams, save_test_results_and_hparams
+
 
 # Load your tokenizer and datasets (assumed preloaded)
 # Step 1: Load Dataset and Labels
@@ -30,7 +34,7 @@ label_names = tokenized_datasets_conll["train"].features["ner_tags"].feature.nam
 num_labels = len(label_names)
 
 # Load model
-model = BertWithMLPForNER(num_labels=num_labels, loss_type='focal')
+model = BertWithMLPForNER(num_labels=num_labels, loss_type='focal_new')
 state_dict = load_file(args.checkpoint_path)
 model.load_state_dict(state_dict)
 
